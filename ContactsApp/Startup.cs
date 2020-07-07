@@ -1,7 +1,9 @@
+using Employee.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,7 +22,6 @@ namespace ContactsApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory
@@ -28,10 +29,14 @@ namespace ContactsApp
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddDbContext<OrganisationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("BloggingDatabase")));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, OrganisationDbContext db)
         {
             if (env.IsDevelopment())
             {
@@ -43,6 +48,8 @@ namespace ContactsApp
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            db.Database.EnsureCreated();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

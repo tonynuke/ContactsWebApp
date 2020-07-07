@@ -1,4 +1,6 @@
-﻿namespace Employee.Domain
+﻿using System;
+
+namespace Employee.Domain
 {
     public class Employee
     {
@@ -6,6 +8,16 @@
 
         public Person Person { get; set; }
 
-        public string Position { get; set; }
+        public Name Position { get; set; }
+
+        private Employee()
+        {
+        }
+
+        public Employee(Person person, Name position)
+        {
+            Person = person ?? throw new ArgumentNullException(nameof(person));
+            Position = position ?? throw new ArgumentNullException(nameof(position));
+        }
     }
 }
