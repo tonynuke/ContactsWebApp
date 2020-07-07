@@ -5,7 +5,7 @@ namespace Employee.Domain
 {
     public class Organisation
     {
-        public long Id { get; set; }
+        public long Id { get; private set; }
 
         public Name Name { get; set; }
 
@@ -13,16 +13,20 @@ namespace Employee.Domain
 
         public IReadOnlyCollection<Employee> Employees => this.employees;
 
-        public Employee AddEmployee(Person person, string position)
+        public Employee CreateEmployee(Name name, Name position)
         {
-            var employee = new Employee(person, position);
+            var employee = new Employee(name, position);
             this.employees.Add(employee);
             return employee;
         }
 
+        public void RemoveEmployee(Employee employee)
+        {
+            this.employees.Remove(employee);
+        }
+
         private Organisation()
         {
-            
         }
 
         public Organisation(Name name)

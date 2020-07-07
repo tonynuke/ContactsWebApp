@@ -9,12 +9,10 @@ namespace Employee.Persistence
         public void Configure(EntityTypeBuilder<Organisation> builder)
         {
             builder.HasKey(organisation => organisation.Id);
+
             builder.OwnsOne(organisation => organisation.Name)
                 .Property(name => name.Value)
                 .HasColumnName(nameof(Organisation.Name));
-
-            //builder.HasMany(organisation => organisation.Employees)
-            //    .WithOne();
 
             var employees = builder.Metadata.FindNavigation(nameof(Organisation.Employees));
             employees.SetPropertyAccessMode(PropertyAccessMode.Field);

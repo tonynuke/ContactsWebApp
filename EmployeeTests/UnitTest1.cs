@@ -30,15 +30,9 @@ namespace EmployeeTests
                 var a = dbContext.Database.CanConnect();
                 var b = dbContext.Database.EnsureCreated();
                 //dbContext.Organisations.w;
-                var person = new Person("name")
-                {
-                    BirthDate = DateTime.Now,
-                    Surname = "w",
-                    Patronymic = "s"
-                };
 
                 var org = new Organisation("org");
-                org.AddEmployee(person, "position");
+                org.CreateEmployee("name", "position");
 
                 dbContext.Organisations.Add(org);
                 dbContext.SaveChanges();

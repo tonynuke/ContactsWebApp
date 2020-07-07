@@ -1,4 +1,5 @@
-﻿using Employee.Domain;
+﻿using System.Linq;
+using Employee.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Employee.Persistence
@@ -9,7 +10,6 @@ namespace Employee.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new PersonConfiguration());
             modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
             modelBuilder.ApplyConfiguration(new OrganisationConfiguration());
 

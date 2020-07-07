@@ -1,7 +1,6 @@
 using Employee.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,8 +30,13 @@ namespace ContactsApp
             });
 
             services.AddDbContext<OrganisationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("BloggingDatabase")));
+                options.UseSqlServer(Configuration.GetConnectionString("OrganisationDatabase")));
 
+            services.AddScoped(provider =>
+            {
+                var dbContext = provider.GetService<OrganisationDbContext>();
+                return new OrganisationRepository(dbContext.Organisations);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
