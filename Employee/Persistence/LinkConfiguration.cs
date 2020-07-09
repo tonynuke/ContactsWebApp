@@ -9,6 +9,7 @@ namespace Employee.Persistence
         public void Configure(EntityTypeBuilder<Link> builder)
         {
             builder.HasKey(link => link.Id);
+            builder.Property(link => link.Value).IsRequired();
         }
     }
 }

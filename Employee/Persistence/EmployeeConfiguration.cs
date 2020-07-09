@@ -11,7 +11,8 @@ namespace Employee.Persistence
 
             builder.OwnsOne(person => person.Name)
                 .Property(name => name.Value)
-                .HasColumnName(nameof(Domain.Employee.Name));
+                .HasColumnName(nameof(Domain.Employee.Name))
+                .IsRequired();
             builder.OwnsOne(person => person.Surname)
                 .Property(name => name.Value)
                 .HasColumnName(nameof(Domain.Employee.Surname));
@@ -22,7 +23,8 @@ namespace Employee.Persistence
 
             builder.OwnsOne(employee => employee.Position)
                 .Property(name => name.Value)
-                .HasColumnName(nameof(Domain.Employee.Position));
+                .HasColumnName(nameof(Domain.Employee.Position))
+                .IsRequired();
 
             var links = builder.Metadata.FindNavigation(nameof(Domain.Employee.Links));
             links.SetPropertyAccessMode(PropertyAccessMode.Field);

@@ -123,11 +123,9 @@ namespace ContactsApp
                 .HasKey(entity => entity.Id)
                 .HasMany(entity => entity.Links);
 
-            odataBuilder.EntityType<OrganisationDTO>()
+            odataBuilder.EntitySet<OrganisationDTO>(routeName).EntityType
                 .HasKey(entity => entity.Id)
                 .HasMany(entity => entity.Employees);
-
-            odataBuilder.EntitySet<OrganisationDTO>(routeName);
 
             return odataBuilder.GetEdmModel();
         }
