@@ -9,17 +9,17 @@ namespace Employee.IntegrationTests
 {
     public class Tests
     {
-        private static OrganisationDbContext dbContext;
+        private static OrganizationDbContext dbContext;
 
         [OneTimeSetUp]
         public Task OneTimeSetUp()
         {
             string connectionString =
-                @"Data Source=(localdb)\MSSQLLocalDB;Database=Organisation;Initial Catalog=Organisation";
+                @"Data Source=(localdb)\MSSQLLocalDB;Database=Organization;Initial Catalog=Organization";
             
-            var optionsBuilder = new DbContextOptionsBuilder<OrganisationDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<OrganizationDbContext>();
             optionsBuilder.UseSqlServer(connectionString);
-            dbContext = new OrganisationDbContext(optionsBuilder.Options);
+            dbContext = new OrganizationDbContext(optionsBuilder.Options);
 
             return dbContext.Database.EnsureCreatedAsync();
         }
@@ -32,12 +32,12 @@ namespace Employee.IntegrationTests
         }
 
         [Test]
-        public async Task AddOrganisationTest()
+        public async Task AddOrganizationTest()
         {
-            var dto = dbContext.Organisations.ToList();
+            var dto = dbContext.Organizations.ToList();
 
-            var organisation = new Organisation("Рога и копыта");
-            var a = await dbContext.Organisations.AddAsync(organisation);
+            var Organization = new Organization("Рога и копыта");
+            var a = await dbContext.Organizations.AddAsync(Organization);
 
             dbContext.SaveChanges();
         }

@@ -6,8 +6,7 @@ namespace ContactsApp.DTO
     {
         public string Value { get; set; }
         public LinkType LinkType { get; set; }
-        public long OrganisationId { get; set; }
-
+        public long OrganizationId { get; set; }
         public long EmployeeId { get; set; }
     }
 }

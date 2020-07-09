@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ContactsApp.DTO;
@@ -14,35 +13,49 @@ namespace ContactsApp.Controllers
     {
         private readonly ILogger<EmployeesController> logger;
 
-        private readonly OrganisationDbContext dbContext;
+        private readonly OrganizationDbContext dbContext;
 
         private readonly IMapper mapper;
+
+        private readonly OrganizationService service;
 
         [HttpPost]
         public async Task<long> CreateEmployee([FromBody] CreateEmployeeDTO dto)
         {
-            var organisation = this.dbContext.Organisations
-                .SingleOrDefault(org => org.Id == dto.OrganisationId);
-            if (organisation == null)
-                throw new Exception($"Организация с id {dto.OrganisationId} не найдена");
+            var organization = this.service.GetOrganization(dto.OrganizationId);
+            if (organization.IsFailure)
+                throw new Exception(organization.Error);
 
-            var newEmployee = organisation.CreateEmployee(dto.Name, dto.Position);
+            var newEmployee = organization.Value.CreateEmployee(dto.Name, dto.Position);
             await this.dbContext.SaveChangesAsync();
             return newEmployee.Id;
+        }
+
+        [HttpPatch]
+        public async Task CreateEmployee([FromBody] PatchEmployeeDTO dto)
+        {
+            var employee = this.service.GetEmployee(dto.OrganizationId, dto.EmployeeId);
+            if (employee.IsFailure)
+                throw new Exception(employee.Error);
+
+            employee.Value.Name = dto.Name;
+            employee.Value.Surname = dto.Surname;
+            employee.Value.Position = dto.Position;
+            await this.dbContext.SaveChangesAsync();
         }
 
         [HttpDelete]
         public async Task DeleteEmployee([FromBody] DeleteEmployeeDTO dto)
         {
-            var organisation = this.dbContext.Organisations.SingleOrDefault(org => org.Id == dto.OrganisationId);
-            if (organisation == null)
-                throw new Exception($"Организация с id {dto.OrganisationId} не найдена");
+            var organization = this.service.GetOrganization(dto.OrganizationId);
+            if (organization.IsFailure)
+                throw new Exception(organization.Error);
 
-            organisation.RemoveEmployee(dto.EmployeeId);
+            organization.Value.RemoveEmployee(dto.EmployeeId);
             await this.dbContext.SaveChangesAsync();
         }
 
-        public EmployeesController(ILogger<EmployeesController> logger, OrganisationDbContext dbContext, IMapper mapper)
+        public EmployeesController(ILogger<EmployeesController> logger, OrganizationDbContext dbContext, IMapper mapper)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));

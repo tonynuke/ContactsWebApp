@@ -27,7 +27,7 @@ export class FetchData extends Component {
                 <tbody>
                     {employees.map(employee =>
                         <tr key={employee.Id}>
-                            <td>{employee.OrganisationName}</td>
+                            <td>{employee.OrganizationName}</td>
                             <td>{employee.EmployeeName}</td>
                             <td>{employee.Position}</td>
                             <td>{employee.LinkValue}</td>

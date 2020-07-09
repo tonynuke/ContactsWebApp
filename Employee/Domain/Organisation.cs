@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Employee.Domain
 {
-    public class Organisation
+    public class Organization
     {
         public long Id { get; private set; }
 
@@ -30,14 +30,14 @@ namespace Employee.Domain
         {
             var employee = this.employees.SingleOrDefault(e => e.Id == id);
             if (employee != null)
-                this.employees.Remove(employee);
+                this.RemoveEmployee(employee);
         }
 
-        private Organisation()
+        private Organization()
         {
         }
 
-        public Organisation(Name name)
+        public Organization(Name name)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
         }

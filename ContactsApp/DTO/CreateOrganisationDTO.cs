@@ -1,6 +1,6 @@
 ﻿namespace ContactsApp.DTO
 {
-    public class CreateOrganisationDTO
+    public class CreateOrganizationDTO
     {
         public string Name { get; set; }
     }

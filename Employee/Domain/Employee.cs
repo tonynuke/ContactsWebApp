@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Employee.Domain
 {
@@ -26,6 +27,18 @@ namespace Employee.Domain
             var link = new Link { Value = value, Type = type };
             this.links.Add(link);
             return link;
+        }
+
+        public void RemoveLink(long id)
+        {
+            var link = this.links.SingleOrDefault(e => e.Id == id);
+            if (link != null)
+                this.RemoveLink(link);
+        }
+
+        public void RemoveLink(Link link)
+        {
+            this.links.Remove(link);
         }
 
         private Employee()

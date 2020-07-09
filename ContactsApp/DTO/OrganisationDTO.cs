@@ -2,7 +2,7 @@
 
 namespace ContactsApp.DTO
 {
-    public class OrganisationDTO
+    public class OrganizationDTO
     {
         public long Id { get; set; }
 

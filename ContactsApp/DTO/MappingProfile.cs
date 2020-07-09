@@ -9,8 +9,8 @@ namespace ContactsApp.DTO
         {
             CreateMap<Link, LinkDTO>();
 
-            CreateMap<Organisation, OrganisationDTO>()
-                .ForMember(nameof(OrganisationDTO.Name), opt => opt.MapFrom(c => c.Name.Value));
+            CreateMap<Organization, OrganizationDTO>()
+                .ForMember(nameof(OrganizationDTO.Name), opt => opt.MapFrom(c => c.Name.Value));
 
             CreateMap<Employee.Domain.Employee, EmployeeDTO>()
                 .ForMember(nameof(EmployeeDTO.Name), opt => opt.MapFrom(c => c.Name.Value))

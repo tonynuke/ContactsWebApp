@@ -1,7 +1,7 @@
 ﻿CREATE VIEW [dbo].[Employees]
 	AS SELECT
-		Organisations.Id as OrganisationId,		
-		Organisations.Name as OrganisationName,
+		Organizations.Id as OrganizationId,		
+		Organizations.Name as OrganizationName,
 		Employee.Id as EmployeeId,
 		Employee.Name as EmployeeName,
 		Employee.Surname,
@@ -9,4 +9,4 @@
 		Employee.Position,
 		Employee.BirthDate
 	FROM Employee
-	JOIN Organisations ON Employee.OrganisationId = Organisations.Id
+	JOIN Organizations ON Employee.OrganizationId = Organizations.Id

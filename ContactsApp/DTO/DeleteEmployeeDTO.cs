@@ -3,6 +3,6 @@
     public class DeleteEmployeeDTO
     {
         public long EmployeeId { get; set; }
-        public long OrganisationId { get; set; }
+        public long OrganizationId { get; set; }
     }
 }

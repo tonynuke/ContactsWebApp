@@ -14,31 +14,33 @@ using Microsoft.Extensions.Logging;
 namespace ContactsApp.Controllers
 {
     [Route("[controller]")]
-    public class OrganisationsController : ControllerBase
+    public class OrganizationsController : ControllerBase
     {
-        private readonly ILogger<OrganisationsController> logger;
+        private readonly ILogger<OrganizationsController> logger;
 
-        private readonly OrganisationDbContext dbContext;
+        private readonly OrganizationDbContext dbContext;
 
         private readonly IMapper mapper;
 
+        private readonly OrganizationService service;
+
         [HttpGet]
-        public Task<IQueryable<OrganisationDTO>> Get(ODataQueryOptions<OrganisationDTO> options)
+        public Task<IQueryable<OrganizationDTO>> Get(ODataQueryOptions<OrganizationDTO> options)
         {
-            var request = this.dbContext.Organisations.AsNoTracking();
+            var request = this.dbContext.Organizations.AsNoTracking();
             return request.GetQueryAsync(this.mapper, options);
         }
 
         [HttpPost]
-        public async Task<long> CreateOrganisation([FromBody] CreateOrganisationDTO dto)
+        public async Task<long> CreateOrganization([FromBody] CreateOrganizationDTO dto)
         {
-            var organisation = new Organisation(dto.Name);
-            await this.dbContext.Organisations.AddAsync(organisation);
+            var organization = new Organization(dto.Name);
+            await this.dbContext.Organizations.AddAsync(organization);
             await this.dbContext.SaveChangesAsync();
-            return organisation.Id;
+            return organization.Id;
         }
 
-        public OrganisationsController(ILogger<OrganisationsController> logger, OrganisationDbContext dbContext,
+        public OrganizationsController(ILogger<OrganizationsController> logger, OrganizationDbContext dbContext,
             IMapper mapper)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));

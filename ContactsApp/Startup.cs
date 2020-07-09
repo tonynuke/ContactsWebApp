@@ -39,9 +39,9 @@ namespace ContactsApp
                 configuration.RootPath = "ClientApp/build";
             });
 
-            var dbConnectionString = Configuration.GetConnectionString("OrganisationDatabase");
+            var dbConnectionString = Configuration.GetConnectionString("OrganizationDatabase");
 
-            services.AddDbContext<OrganisationDbContext>(options =>
+            services.AddDbContext<OrganizationDbContext>(options =>
             {
                 options.UseSqlServer(dbConnectionString).UseLoggerFactory(MyLoggerFactory);
             }, ServiceLifetime.Scoped);
@@ -61,7 +61,7 @@ namespace ContactsApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, OrganisationDbContext db)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, OrganizationDbContext db)
         {
             db.Database.EnsureCreated();
 
@@ -94,11 +94,11 @@ namespace ContactsApp
                 routeBuilder.Expand().Select().Filter();
 
                 var routePrefix = "odata";
-                string organisationControllerRouteName = "Organisations";
+                string OrganizationControllerRouteName = "Organizations";
                 routeBuilder.MapODataServiceRoute(
-                    organisationControllerRouteName,
+                    OrganizationControllerRouteName,
                     routePrefix,
-                    GetOrganisationsEdmModel(organisationControllerRouteName));
+                    GetOrganizationsEdmModel(OrganizationControllerRouteName));
             });
 
             app.UseSpa(spa =>
@@ -112,7 +112,7 @@ namespace ContactsApp
             });
         }
 
-        IEdmModel GetOrganisationsEdmModel(string routeName)
+        IEdmModel GetOrganizationsEdmModel(string routeName)
         {
             var odataBuilder = new ODataConventionModelBuilder();
 
@@ -123,7 +123,7 @@ namespace ContactsApp
                 .HasKey(entity => entity.Id)
                 .HasMany(entity => entity.Links);
 
-            odataBuilder.EntitySet<OrganisationDTO>(routeName).EntityType
+            odataBuilder.EntitySet<OrganizationDTO>(routeName).EntityType
                 .HasKey(entity => entity.Id)
                 .HasMany(entity => entity.Employees);
 

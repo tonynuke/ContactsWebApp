@@ -1,37 +1,37 @@
 import React, { Component } from 'react';
 
-export class Organisations extends Component {
-    static displayName = Organisations.name;
+export class Organizations extends Component {
+    static displayName = Organizations.name;
 
     constructor(props) {
         super(props);
         this.state = {
-            organisations: [],
-            organisationName: "unicorn",
+            Organizations: [],
+            OrganizationName: "unicorn",
             loading: true
         };
-        this.addOrganisation = this.addOrganisation.bind(this);
+        this.addOrganization = this.addOrganization.bind(this);
     }
 
-    async addOrganisation() {
+    async addOrganization() {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: this.state.organisationName })
+            body: JSON.stringify({ name: this.state.OrganizationName })
         };
 
-        const response = await fetch('employees/organisation', requestOptions);
+        const response = await fetch('employees/Organization', requestOptions);
         const data = await response.json();
         this.setState({
-            organisations: [...this.state.organisations, { id: data, name: this.state.organisationName }]
+            Organizations: [...this.state.Organizations, { id: data, name: this.state.OrganizationName }]
         });
     }
 
     componentDidMount() {
-        this.populateOrganisationsData();
+        this.populateOrganizationsData();
     }
 
-    static renderOrganisationsTable(organisations) {
+    static renderOrganizationsTable(Organizations) {
         return (
             <div>
                 <table className='table table-striped' aria-labelledby="tabelLabel">
@@ -41,14 +41,14 @@ export class Organisations extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {organisations.map(organisation =>
-                            <tr key={organisation.Id}>
-                                <td>{organisation.Name}</td>
+                        {Organizations.map(Organization =>
+                            <tr key={Organization.Id}>
+                                <td>{Organization.Name}</td>
                             </tr>
                         )}
                     </tbody>
                 </table>
-                <button className="btn btn-primary" onClick={this.addOrganisation}>Add organisation</button>
+                <button className="btn btn-primary" onClick={this.addOrganization}>Add Organization</button>
             </div>
         );
     }
@@ -56,19 +56,19 @@ export class Organisations extends Component {
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
-            : Organisations.renderOrganisationsTable(this.state.organisations);
+            : Organizations.renderOrganizationsTable(this.state.Organizations);
 
         return (
             <div>
-                <h1 id="tabelLabel">Organisations</h1>
+                <h1 id="tabelLabel">Organizations</h1>
                 {contents}
             </div>
         );
     }
 
-    async populateOrganisationsData() {
-        const response = await fetch('odata/organisationsquery');
+    async populateOrganizationsData() {
+        const response = await fetch('odata/Organizationsquery');
         const data = await response.json();
-        this.setState({ organisations: data.value, loading: false });
+        this.setState({ Organizations: data.value, loading: false });
     }
 }

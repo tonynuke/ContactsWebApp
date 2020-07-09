@@ -3,19 +3,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Employee.Persistence
 {
-    public class OrganisationDbContext : DbContext
+    public class OrganizationDbContext : DbContext
     {
-        public DbSet<Organisation> Organisations { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
-            modelBuilder.ApplyConfiguration(new OrganisationConfiguration());
+            modelBuilder.ApplyConfiguration(new OrganizationConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }
 
-        public OrganisationDbContext(DbContextOptions<OrganisationDbContext> options)
+        public OrganizationDbContext(DbContextOptions<OrganizationDbContext> options)
             : base(options)
         { }
     }
