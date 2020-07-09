@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Employee", "Employee\Employ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{9737FC53-B0A6-4503-9185-8E1A7427ED39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeTests", "EmployeeTests\EmployeeTests.csproj", "{43C39C68-5F97-4283-8952-D9D47FB45801}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Employee.IntegrationTests", "EmployeeTests\Employee.IntegrationTests.csproj", "{43C39C68-5F97-4283-8952-D9D47FB45801}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AF6967DA-9856-4B04-9895-760FBAE91518}"
 EndProject

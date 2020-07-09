@@ -21,9 +21,9 @@ namespace Employee.Domain
 
         public IReadOnlyCollection<Link> Links => this.links;
 
-        public Link AddLink(string value)
+        public Link AddLink(string value, LinkType type)
         {
-            var link = new Link { Value = value };
+            var link = new Link { Value = value, Type = type };
             this.links.Add(link);
             return link;
         }

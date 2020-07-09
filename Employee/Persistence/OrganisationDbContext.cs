@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Employee.Domain;
+﻿using Employee.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Employee.Persistence
