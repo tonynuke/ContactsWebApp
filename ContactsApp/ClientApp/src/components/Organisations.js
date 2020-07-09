@@ -11,7 +11,6 @@ export class Organisations extends Component {
             loading: true
         };
         this.addOrganisation = this.addOrganisation.bind(this);
-        //this.addOrganisation();
     }
 
     async addOrganisation() {

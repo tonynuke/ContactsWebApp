@@ -1,4 +1,6 @@
-using Employee.DTO;
+using AutoMapper;
+using ContactsApp.DTO;
+using Employee.Domain;
 using Employee.Persistence;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
@@ -38,9 +40,14 @@ namespace ContactsApp
             services.AddDbContext<OrganisationDbContext>(options =>
                 options.UseSqlServer(dbConnectionString), ServiceLifetime.Scoped);
 
-            services.AddDbContext<OrganisationQueryDbContext>(options =>
-                options.UseSqlServer(dbConnectionString), ServiceLifetime.Singleton);
-            
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
             services.AddControllers(mvcOptions =>
                 mvcOptions.EnableEndpointRouting = false);
 
@@ -78,16 +85,14 @@ namespace ContactsApp
 
             app.UseMvc(routeBuilder =>
             {
-                routeBuilder.Select().Filter();
-                
-                var routePrefix = "odata";
-                string employeesRouteName = "EmployeesQuery";
-                routeBuilder.MapODataServiceRoute(
-                    employeesRouteName, routePrefix, GetEmployeesEdmModel(employeesRouteName));
+                routeBuilder.Expand().Select().Filter();
 
-                string organisationsRouteName = "OrganisationsQuery";
+                var routePrefix = "odata";
+                string organisationControllerRouteName = "Organisations";
                 routeBuilder.MapODataServiceRoute(
-                    organisationsRouteName, routePrefix, GetOrganisationsEdmModel(organisationsRouteName));
+                    organisationControllerRouteName,
+                    routePrefix,
+                    GetOrganisationsEdmModel(organisationControllerRouteName));
             });
 
             app.UseSpa(spa =>
@@ -101,19 +106,22 @@ namespace ContactsApp
             });
         }
 
-        IEdmModel GetEmployeesEdmModel(string routeName)
-        {
-            var odataBuilder = new ODataConventionModelBuilder();
-            odataBuilder.EntitySet<PlainEmployeeDTO>(routeName)
-                .EntityType.HasKey(entity => entity.Id);
-
-            return odataBuilder.GetEdmModel();
-        }
         IEdmModel GetOrganisationsEdmModel(string routeName)
         {
             var odataBuilder = new ODataConventionModelBuilder();
-            odataBuilder.EntitySet<OrganisationDTO>(routeName)
-                .EntityType.HasKey(entity => entity.Id);
+
+            odataBuilder.EntityType<Link>()
+                .HasKey(entity => entity.Id);
+
+            odataBuilder.EntityType<Employee.Domain.Employee>()
+                .HasKey(entity => entity.Id)
+                .HasMany(entity => entity.Links);
+
+            odataBuilder.EntityType<Organisation>()
+                .HasKey(entity => entity.Id)
+                .HasMany(entity => entity.Employees);
+
+            odataBuilder.EntitySet<Organisation>(routeName);
 
             return odataBuilder.GetEdmModel();
         }

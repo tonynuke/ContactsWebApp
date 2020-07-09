@@ -34,7 +34,7 @@ namespace Employee.IntegrationTests
         [Test]
         public async Task AddOrganisationTest()
         {
-            var dto = dbContext.EmployeeDTOs.ToList();
+            var dto = dbContext.Organisations.ToList();
 
             var organisation = new Organisation("Рога и копыта");
             var a = await dbContext.Organisations.AddAsync(organisation);
