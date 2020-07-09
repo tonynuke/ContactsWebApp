@@ -11,12 +11,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
 
 namespace ContactsApp
 {
     public class Startup
     {
+        public static readonly ILoggerFactory MyLoggerFactory
+            = LoggerFactory.Create(builder => { builder.AddDebug(); });
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -38,7 +42,9 @@ namespace ContactsApp
             var dbConnectionString = Configuration.GetConnectionString("OrganisationDatabase");
 
             services.AddDbContext<OrganisationDbContext>(options =>
-                options.UseSqlServer(dbConnectionString), ServiceLifetime.Scoped);
+            {
+                options.UseSqlServer(dbConnectionString).UseLoggerFactory(MyLoggerFactory);
+            }, ServiceLifetime.Scoped);
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -98,7 +104,7 @@ namespace ContactsApp
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
-                
+
                 if (env.IsDevelopment())
                 {
                     spa.UseReactDevelopmentServer(npmScript: "start");
@@ -110,18 +116,18 @@ namespace ContactsApp
         {
             var odataBuilder = new ODataConventionModelBuilder();
 
-            odataBuilder.EntityType<Link>()
+            odataBuilder.EntityType<LinkDTO>()
                 .HasKey(entity => entity.Id);
 
-            odataBuilder.EntityType<Employee.Domain.Employee>()
+            odataBuilder.EntityType<EmployeeDTO>()
                 .HasKey(entity => entity.Id)
                 .HasMany(entity => entity.Links);
 
-            odataBuilder.EntityType<Organisation>()
+            odataBuilder.EntityType<OrganisationDTO>()
                 .HasKey(entity => entity.Id)
                 .HasMany(entity => entity.Employees);
 
-            odataBuilder.EntitySet<Organisation>(routeName);
+            odataBuilder.EntitySet<OrganisationDTO>(routeName);
 
             return odataBuilder.GetEdmModel();
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Employee.Domain;
 
 namespace ContactsApp.DTO
 {
@@ -18,6 +17,6 @@ namespace ContactsApp.DTO
 
         public DateTime BirthDate { get; set; }
 
-        public List<Link> Links { get; set; } = new List<Link>();
+        public List<LinkDTO> Links { get; set; } = new List<LinkDTO>();
     }
 }

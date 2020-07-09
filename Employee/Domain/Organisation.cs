@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Employee.Domain
 {
@@ -23,6 +24,13 @@ namespace Employee.Domain
         public void RemoveEmployee(Employee employee)
         {
             this.employees.Remove(employee);
+        }
+
+        public void RemoveEmployee(long id)
+        {
+            var employee = this.employees.SingleOrDefault(e => e.Id == id);
+            if (employee != null)
+                this.employees.Remove(employee);
         }
 
         private Organisation()

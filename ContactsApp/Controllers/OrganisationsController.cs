@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
+using AutoMapper.AspNet.OData;
 using ContactsApp.DTO;
 using Employee.Domain;
 using Employee.Persistence;
-using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -23,17 +23,13 @@ namespace ContactsApp.Controllers
         private readonly IMapper mapper;
 
         [HttpGet]
-        [EnableQuery]
-        public IQueryable<Organisation> Get()
+        public Task<IQueryable<OrganisationDTO>> Get(ODataQueryOptions<OrganisationDTO> options)
         {
             var request = this.dbContext.Organisations.AsNoTracking();
-
-            //return request.ProjectTo<OrganisationDTO>(this.mapper.ConfigurationProvider);
-            return request;
+            return request.GetQueryAsync(this.mapper, options);
         }
 
         [HttpPost]
-        [Route("organisation")]
         public async Task<long> CreateOrganisation([FromBody] CreateOrganisationDTO dto)
         {
             var organisation = new Organisation(dto.Name);

@@ -17,7 +17,6 @@ namespace ContactsApp.Controllers
         private readonly OrganisationDbContext dbContext;
 
         [HttpPost]
-        [Route("link")]
         public async Task<long> CreateLink([FromBody] CreateLinkDTO dto)
         {
             var organisation = this.dbContext.Organisations
