@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace ContactsApp
+namespace Contacts.WebService
 {
     public class Program
     {

@@ -3,15 +3,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.AspNet.OData;
-using ContactsApp.DTO.Employee;
-using ContactsApp.Services;
+using Contacts.WebService.DTO.Employee;
+using Contacts.WebService.Services;
 using Employee.Persistence;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace ContactsApp.Controllers
+namespace Contacts.WebService.Controllers
 {
     [Route("[controller]")]
     public class EmployeesController : ControllerBase
@@ -31,7 +31,6 @@ namespace ContactsApp.Controllers
             return request.GetQueryAsync(this.mapper, options);
         }
 
-
         [HttpPost]
         public async Task<long> CreateEmployee([FromBody] CreateEmployeeDTO dto)
         {
@@ -42,17 +41,17 @@ namespace ContactsApp.Controllers
         }
 
         [HttpPut]
-        public async Task CreateEmployee([FromBody] PutEmployeeDTO dto)
+        public async Task CreateOrUpdateEmployee([FromBody] PutEmployeeDTO dto)
         {
-            var employee = this.service.GetEmployee(dto.Id);
-            if (employee.IsFailure)
-                throw new Exception(employee.Error);
+            //var employee = this.service.GetEmployee(dto.Id);
+            //if (employee.IsFailure)
+            //    throw new Exception(employee.Error);
 
-            employee.Value.Name = dto.Name;
-            employee.Value.Surname = dto.Surname;
-            employee.Value.Position = dto.Position;
+            //employee.Value.Name = dto.Name;
+            //employee.Value.Surname = dto.Surname;
+            //employee.Value.Position = dto.Position;
 
-            await this.dbContext.SaveChangesAsync();
+            //await this.dbContext.SaveChangesAsync();
         }
 
         [HttpDelete]

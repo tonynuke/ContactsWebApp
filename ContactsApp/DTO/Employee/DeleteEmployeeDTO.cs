@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ContactsApp.DTO.Employee
+namespace Contacts.WebService.DTO.Employee
 {
     public class DeleteEmployeeDTO
     {

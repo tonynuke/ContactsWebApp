@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using ContactsApp.DTO.Employee;
-using ContactsApp.DTO.Link;
+using Contacts.WebService.DTO.Employee;
+using Contacts.WebService.DTO.Link;
 
-namespace ContactsApp.DTO
+namespace Contacts.WebService.DTO
 {
     public class MappingProfile : Profile
     {

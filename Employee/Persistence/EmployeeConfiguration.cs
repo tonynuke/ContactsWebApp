@@ -20,9 +20,9 @@ namespace Employee.Persistence
             builder.OwnsOne(person => person.Patronymic)
                 .Property(name => name.Value)
                 .HasColumnName(nameof(Domain.Employee.Patronymic));
-            builder.OwnsOne(person => person.Organisation)
+            builder.OwnsOne(person => person.Organization)
                 .Property(name => name.Value)
-                .HasColumnName(nameof(Domain.Employee.Organisation));
+                .HasColumnName(nameof(Domain.Employee.Organization));
             builder.Property(person => person.BirthDate);
 
             builder.OwnsOne(employee => employee.Position)

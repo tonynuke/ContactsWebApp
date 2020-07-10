@@ -4,7 +4,7 @@ using CSharpFunctionalExtensions;
 using Employee.Domain;
 using Employee.Persistence;
 
-namespace ContactsApp.Services
+namespace Contacts.WebService.Services
 {
     public class GetterService
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ContactsApp.DTO.Link
+namespace Contacts.WebService.DTO.Link
 {
     public class DeleteLinkDTO
     {

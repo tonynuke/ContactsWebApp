@@ -1,6 +1,6 @@
 ﻿using Employee.Domain;
 
-namespace ContactsApp.DTO.Link
+namespace Contacts.WebService.DTO.Link
 {
     public class LinkDTO
     {

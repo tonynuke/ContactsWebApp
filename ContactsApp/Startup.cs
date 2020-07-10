@@ -1,8 +1,7 @@
 using AutoMapper;
-using ContactsApp.DTO;
-using ContactsApp.DTO.Employee;
-using ContactsApp.DTO.Link;
-using Employee.Domain;
+using Contacts.WebService.DTO;
+using Contacts.WebService.DTO.Employee;
+using Contacts.WebService.DTO.Link;
 using Employee.Persistence;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
@@ -16,7 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
 
-namespace ContactsApp
+namespace Contacts.WebService
 {
     public class Startup
     {
@@ -96,7 +95,7 @@ namespace ContactsApp
                 routeBuilder.Expand().Select().Filter();
 
                 const string routePrefix = "odata";
-                const string controllerRouteName = "employees";
+                const string controllerRouteName = "Employees";
                 routeBuilder.MapODataServiceRoute(
                     controllerRouteName,
                     routePrefix,

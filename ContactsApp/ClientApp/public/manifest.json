@@ -1,6 +1,6 @@
 {
-  "short_name": "ContactsApp",
-  "name": "ContactsApp",
+  "short_name": "Contacts.WebService",
+  "name": "Contacts.WebService",
   "icons": [
     {
       "src": "favicon.ico",
