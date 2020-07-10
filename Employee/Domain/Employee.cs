@@ -16,6 +16,8 @@ namespace Employee.Domain
 
         public Name Patronymic { get; set; }
 
+        public Name Organization { get; set; }
+
         public DateTime BirthDate { get; set; }
 
         private readonly List<Link> links = new List<Link>();

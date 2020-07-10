@@ -10,6 +10,7 @@ namespace Employee.Persistence
         {
             builder.HasKey(link => link.Id);
             builder.Property(link => link.Value).IsRequired();
+            builder.Property(link => link.Type).IsRequired();
         }
     }
 }

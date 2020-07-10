@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using ContactsApp.DTO;
+using ContactsApp.DTO.Link;
+using ContactsApp.Services;
 using Employee.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,14 +15,14 @@ namespace ContactsApp.Controllers
     {
         private readonly ILogger<LinksController> logger;
 
-        private readonly OrganizationDbContext dbContext;
+        private readonly EmployeeDbContext dbContext;
 
-        private readonly OrganizationService service;
+        private readonly GetterService service;
 
         [HttpPost]
         public async Task<long> CreateLink([FromBody] CreateLinkDTO dto)
         {
-            var employee = this.service.GetEmployee(dto.OrganizationId, dto.EmployeeId);
+            var employee = this.service.GetEmployee(dto.EmployeeId);
             if (employee.IsFailure)
                 throw new Exception(employee.Error);
 
@@ -31,9 +32,9 @@ namespace ContactsApp.Controllers
         }
 
         [HttpDelete]
-        public async Task<long> CreateLink([FromBody] DeleteLinkDTO dto)
+        public async Task DeleteLink([FromBody] DeleteLinkDTO dto)
         {
-            var employee = this.service.GetEmployee(dto.OrganizationId, dto.EmployeeId);
+            var employee = this.service.GetEmployee(dto.EmployeeId);
             if (employee.IsFailure)
                 throw new Exception(employee.Error);
 
@@ -41,7 +42,7 @@ namespace ContactsApp.Controllers
             await this.dbContext.SaveChangesAsync();
         }
 
-        public LinksController(ILogger<LinksController> logger, OrganizationDbContext dbContext)
+        public LinksController(ILogger<LinksController> logger, EmployeeDbContext dbContext)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));

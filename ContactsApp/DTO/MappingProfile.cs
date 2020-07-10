@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using Employee.Domain;
+using ContactsApp.DTO.Employee;
+using ContactsApp.DTO.Link;
 
 namespace ContactsApp.DTO
 {
@@ -7,12 +8,9 @@ namespace ContactsApp.DTO
     {
         public MappingProfile()
         {
-            CreateMap<Link, LinkDTO>();
+            CreateMap<global::Employee.Domain.Link, LinkDTO>();
 
-            CreateMap<Organization, OrganizationDTO>()
-                .ForMember(nameof(OrganizationDTO.Name), opt => opt.MapFrom(c => c.Name.Value));
-
-            CreateMap<Employee.Domain.Employee, EmployeeDTO>()
+            CreateMap<global::Employee.Domain.Employee, EmployeeDTO>()
                 .ForMember(nameof(EmployeeDTO.Name), opt => opt.MapFrom(c => c.Name.Value))
                 .ForMember(nameof(EmployeeDTO.Surname), opt => opt.MapFrom(c => c.Surname.Value))
                 .ForMember(nameof(EmployeeDTO.Patronymic), opt => opt.MapFrom(c => c.Patronymic.Value))

@@ -1,5 +1,7 @@
 using AutoMapper;
 using ContactsApp.DTO;
+using ContactsApp.DTO.Employee;
+using ContactsApp.DTO.Link;
 using Employee.Domain;
 using Employee.Persistence;
 using Microsoft.AspNet.OData.Builder;
@@ -41,7 +43,7 @@ namespace ContactsApp
 
             var dbConnectionString = Configuration.GetConnectionString("OrganizationDatabase");
 
-            services.AddDbContext<OrganizationDbContext>(options =>
+            services.AddDbContext<EmployeeDbContext>(options =>
             {
                 options.UseSqlServer(dbConnectionString).UseLoggerFactory(MyLoggerFactory);
             }, ServiceLifetime.Scoped);
@@ -61,7 +63,7 @@ namespace ContactsApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, OrganizationDbContext db)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, EmployeeDbContext db)
         {
             db.Database.EnsureCreated();
 
@@ -93,12 +95,12 @@ namespace ContactsApp
             {
                 routeBuilder.Expand().Select().Filter();
 
-                var routePrefix = "odata";
-                string OrganizationControllerRouteName = "Organizations";
+                const string routePrefix = "odata";
+                const string controllerRouteName = "employees";
                 routeBuilder.MapODataServiceRoute(
-                    OrganizationControllerRouteName,
+                    controllerRouteName,
                     routePrefix,
-                    GetOrganizationsEdmModel(OrganizationControllerRouteName));
+                    GetOrganizationsEdmModel(controllerRouteName));
             });
 
             app.UseSpa(spa =>
@@ -119,13 +121,9 @@ namespace ContactsApp
             odataBuilder.EntityType<LinkDTO>()
                 .HasKey(entity => entity.Id);
 
-            odataBuilder.EntityType<EmployeeDTO>()
+            odataBuilder.EntitySet<EmployeeDTO>(routeName).EntityType
                 .HasKey(entity => entity.Id)
                 .HasMany(entity => entity.Links);
-
-            odataBuilder.EntitySet<OrganizationDTO>(routeName).EntityType
-                .HasKey(entity => entity.Id)
-                .HasMany(entity => entity.Employees);
 
             return odataBuilder.GetEdmModel();
         }

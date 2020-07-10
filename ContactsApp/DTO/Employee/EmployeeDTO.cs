@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using ContactsApp.DTO.Link;
 
-namespace ContactsApp.DTO
+namespace ContactsApp.DTO.Employee
 {
     public class EmployeeDTO
     {
