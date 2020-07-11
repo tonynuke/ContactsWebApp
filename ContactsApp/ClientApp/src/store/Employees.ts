@@ -10,6 +10,9 @@ export interface OdataEmployeesState {
 
 export interface EmployeesState {
     employees: EmployeeState[];
+    isModalOpen: boolean;
+
+    current: EmployeeState;
 }
 
 export interface EmployeeState {
@@ -19,6 +22,7 @@ export interface EmployeeState {
     patronymic: string;
     position: string;
     organization: string;
+
     links: LinkState[];
 }
 
@@ -32,6 +36,19 @@ export interface LinkState {
 // ACTIONS - These are serializable (hence replayable) descriptions of state transitions.
 // They do not themselves have any side-effects; they just describe something that is going to happen.
 // Use @typeName and isActionType for type detection that works even after serialization/deserialization.
+
+export interface OpenCreateModalAction {
+    type: 'OPEN_CREATE_MODAL';
+}
+
+export interface OpenEditModalAction {
+    type: 'OPEN_EDIT_MODAL';
+    employee: EmployeeState;
+}
+
+export interface CloseModalAction {
+    type: 'CLOSE_MODAL';
+}
 
 export interface CreateEmployeeAction {
     type: 'CREATE_EMPLOYEE';
@@ -50,7 +67,8 @@ interface ReceiveEmployeesAction {
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-export type KnownAction = CreateEmployeeAction | DeleteEmployeeAction | ReceiveEmployeesAction;
+export type KnownAction = CreateEmployeeAction | DeleteEmployeeAction | ReceiveEmployeesAction
+    | OpenCreateModalAction | OpenEditModalAction | CloseModalAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -107,13 +125,22 @@ export const actionCreators = {
                     dispatch({ type: 'DELETE_EMPLOYEE', ids: ids });
                 });
         }
-    }
+    },
+    openCreateModal: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'OPEN_CREATE_MODAL' });
+    },
+    openEditModal: (employee: EmployeeState): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'OPEN_EDIT_MODAL', employee: employee });
+    },
+    closeModal: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'CLOSE_MODAL' });
+    },
 };
 
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
-const unloadedState: EmployeesState = { employees: [] };
+const unloadedState: EmployeesState = { employees: [], isModalOpen: false, current: {} as EmployeeState };
 
 export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefined, incomingAction: Action): EmployeesState => {
     if (state === undefined) {
@@ -123,17 +150,44 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
     const action = incomingAction as KnownAction;
     switch (action.type) {
         case 'CREATE_EMPLOYEE':
-            return { employees: [...state.employees, action.employee] };
+            return {
+                employees: [...state.employees, action.employee],
+                isModalOpen: false,
+                current: state.current
+            };
         case 'DELETE_EMPLOYEE':
             {
                 const notFoundIndex = -1;
                 const deletedIds = action.ids;
-                return { employees: state.employees.filter(employee => deletedIds.indexOf(employee.id) === notFoundIndex) };
+                return {
+                    employees: state.employees.filter(employee => deletedIds.indexOf(employee.id) === notFoundIndex),
+                    isModalOpen: false,
+                    current: state.current
+                };
             }
         case 'RECEIVE_EMPLOYEES':
             return {
-                employees: action.employees,
+                employees: action.employees, isModalOpen: false,
+                current: state.current
             };
+        case 'OPEN_CREATE_MODAL':
+            return {
+                employees: state.employees,
+                isModalOpen: true,
+                current: {} as EmployeeState
+            }
+        case 'OPEN_EDIT_MODAL':
+            return {
+                employees: state.employees,
+                isModalOpen: true,
+                current: action.employee
+            }
+        case 'CLOSE_MODAL':
+            return {
+                employees: state.employees,
+                isModalOpen: false,
+                current: state.current
+            }
         default:
             return state;
     }
