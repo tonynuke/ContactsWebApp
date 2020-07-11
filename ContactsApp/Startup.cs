@@ -1,3 +1,4 @@
+using System.Text.Json;
 using AutoMapper;
 using Contacts.WebService.DTO;
 using Contacts.WebService.DTO.Employee;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
+using Newtonsoft.Json.Serialization;
 
 namespace Contacts.WebService
 {
@@ -57,6 +59,9 @@ namespace Contacts.WebService
 
             services.AddControllers(mvcOptions =>
                 mvcOptions.EnableEndpointRouting = false);
+
+            //services.AddMvc()
+            //    .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
             services.AddOData();
         }
@@ -116,6 +121,7 @@ namespace Contacts.WebService
         IEdmModel GetOrganizationsEdmModel(string routeName)
         {
             var odataBuilder = new ODataConventionModelBuilder();
+            odataBuilder.EnableLowerCamelCase();
 
             odataBuilder.EntityType<LinkDTO>()
                 .HasKey(entity => entity.Id);

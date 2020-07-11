@@ -47,10 +47,10 @@ namespace Employee.Domain
         {
         }
 
-        public Employee(Name position, Name name)
+        public Employee(Name name, Name position)
         {
-            Position = position ?? throw new ArgumentNullException(nameof(position));
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Position = position ?? throw new ArgumentNullException(nameof(position));
         }
     }
 }

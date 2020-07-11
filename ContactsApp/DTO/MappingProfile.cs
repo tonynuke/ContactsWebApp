@@ -14,7 +14,8 @@ namespace Contacts.WebService.DTO
                 .ForMember(nameof(EmployeeDTO.Name), opt => opt.MapFrom(c => c.Name.Value))
                 .ForMember(nameof(EmployeeDTO.Surname), opt => opt.MapFrom(c => c.Surname.Value))
                 .ForMember(nameof(EmployeeDTO.Patronymic), opt => opt.MapFrom(c => c.Patronymic.Value))
-                .ForMember(nameof(EmployeeDTO.Position), opt => opt.MapFrom(c => c.Position.Value));
+                .ForMember(nameof(EmployeeDTO.Position), opt => opt.MapFrom(c => c.Position.Value))
+                .ForMember(nameof(EmployeeDTO.Organization), opt => opt.MapFrom(c => c.Organization.Value));
         }
     }
 }
