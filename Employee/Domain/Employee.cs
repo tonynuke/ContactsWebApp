@@ -38,6 +38,11 @@ namespace Employee.Domain
                 this.RemoveLink(link);
         }
 
+        public void RemoveAllLinks()
+        {
+            this.links.Clear();
+        }
+
         public void RemoveLink(Link link)
         {
             this.links.Remove(link);

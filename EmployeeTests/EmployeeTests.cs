@@ -32,14 +32,19 @@ namespace Employee.IntegrationTests
         }
 
         [Test]
-        public async Task AddOrganizationTest()
+        public async Task AddEmployeeTest()
         {
             var dto = dbContext.Employees.ToList();
 
             var employee = new Domain.Employee("developer", "vasya");
-            var a = await dbContext.Employees.AddAsync(employee);
+            employee.AddLink("live:nickname", LinkType.Skype);
+            await dbContext.Employees.AddAsync(employee);
 
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
+
+            dbContext.Remove(employee);
+
+            await dbContext.SaveChangesAsync();
         }
     }
 }

@@ -1,10 +1,11 @@
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from './';
+import buildQuery from 'odata-query'
+import * as Employee from "./EmployeeActions";
+import { EmployeeState, LinkState, State } from "./EmployeeState";
+import * as EmployeeReducer from "./EmployeeReducer";
 
-// -----------------
-// STATE - This defines the type of data maintained in the Redux store.
-
-export interface OdataEmployeesState {
+interface OdataEmployeesState {
     value: EmployeeState[];
 }
 
@@ -15,30 +16,8 @@ export interface EmployeesState {
     current: EmployeeState;
 }
 
-export interface EmployeeState {
-    id: number;
-    name: string;
-    surname: string;
-    patronymic: string;
-    position: string;
-    organization: string;
-
-    links: LinkState[];
-}
-
-export interface LinkState {
-    id: number;
-    value: string;
-    type: string;
-}
-
-// -----------------
-// ACTIONS - These are serializable (hence replayable) descriptions of state transitions.
-// They do not themselves have any side-effects; they just describe something that is going to happen.
-// Use @typeName and isActionType for type detection that works even after serialization/deserialization.
-
-export interface OpenCreateModalAction {
-    type: 'OPEN_CREATE_MODAL';
+export interface OpenNewModalAction {
+    type: 'OPEN_NEW_MODAL';
 }
 
 export interface OpenEditModalAction {
@@ -48,16 +27,12 @@ export interface OpenEditModalAction {
 
 export interface CloseModalAction {
     type: 'CLOSE_MODAL';
-}
-
-export interface CreateEmployeeAction {
-    type: 'CREATE_EMPLOYEE';
-    employee: EmployeeState;
+    needSave: boolean;
 }
 
 export interface DeleteEmployeeAction {
     type: 'DELETE_EMPLOYEE';
-    ids: number[];
+    id: number;
 }
 
 interface ReceiveEmployeesAction {
@@ -65,80 +40,49 @@ interface ReceiveEmployeesAction {
     employees: EmployeeState[];
 }
 
-// Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
-// declared type strings (and not any other arbitrary string).
-export type KnownAction = CreateEmployeeAction | DeleteEmployeeAction | ReceiveEmployeesAction
-    | OpenCreateModalAction | OpenEditModalAction | CloseModalAction;
-
-// ----------------
-// ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
-// They don't directly mutate state, but they can have external side-effects (such as loading data).
+export type KnownAction = ReceiveEmployeesAction | OpenNewModalAction | OpenEditModalAction | CloseModalAction | DeleteEmployeeAction
+    | Employee.KnownAction;
 
 export const actionCreators = {
     requestEmployees: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
         const appState = getState();
+        const expand = 'Links';
+        const query = buildQuery({ expand });
         if (appState && appState.employees) {
-            fetch(`odata/employees`)
+            fetch(`odata/employees${query}`)
                 .then(response => response.json() as Promise<OdataEmployeesState>)
                 .then(data => {
                     dispatch({ type: 'RECEIVE_EMPLOYEES', employees: data.value });
                 });
         }
     },
-    createEmployee: (name: string, position: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        // Only load data if it's something we don't already have (and are not already loading)
-        const appState = getState();
-        const newEmployee = { name: name, position: position };
-        const request: RequestInit = {
-            method: 'POST',
-            body: JSON.stringify(newEmployee),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        };
-        if (appState && appState.employees) {
-            fetch(`employees`, request)
-                .then(response => response.json() as Promise<number>)
-                .then(data => {
-                    const employee: EmployeeState = { id: data, name: name, position: position, patronymic: '', surname: '', organization: '', links: [] };
-                    dispatch({ type: 'CREATE_EMPLOYEE', employee: employee });
-                });
-        }
-    },
-    deleteEmployee: (ids: number[]): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        // Only load data if it's something we don't already have (and are not already loading)
-        const appState = getState();
-        const request: RequestInit = {
-            method: 'DELETE',
-            body: JSON.stringify({ ids: ids }),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        };
-        if (appState && appState.employees) {
-            fetch(`employees`, request)
-                .then(response => response)
-                .then(data => {
-                    dispatch({ type: 'DELETE_EMPLOYEE', ids: ids });
-                });
-        }
-    },
-    openCreateModal: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'OPEN_CREATE_MODAL' });
+    openNewModal: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'OPEN_NEW_MODAL' });
     },
     openEditModal: (employee: EmployeeState): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'OPEN_EDIT_MODAL', employee: employee });
     },
-    closeModal: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'CLOSE_MODAL' });
+    closeModal: (needSave: boolean): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'CLOSE_MODAL', needSave: needSave });
     },
+    deleteEmployee: (id: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        const request: RequestInit = {
+            method: 'DELETE',
+            body: JSON.stringify({ ids: [id] }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        };
+        fetch('employees', request)
+            .then(response => response)
+            .then(data => {
+                dispatch({ type: 'DELETE_EMPLOYEE', id: id });
+            });
+    },
+    ...Employee.actionCreators
 };
-
-// ----------------
-// REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
 const unloadedState: EmployeesState = { employees: [], isModalOpen: false, current: {} as EmployeeState };
 
@@ -148,17 +92,12 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
     }
 
     const action = incomingAction as KnownAction;
+
     switch (action.type) {
-        case 'CREATE_EMPLOYEE':
-            return {
-                employees: [...state.employees, action.employee],
-                isModalOpen: false,
-                current: state.current
-            };
         case 'DELETE_EMPLOYEE':
             {
                 const notFoundIndex = -1;
-                const deletedIds = action.ids;
+                const deletedIds = [action.id];
                 return {
                     employees: state.employees.filter(employee => deletedIds.indexOf(employee.id) === notFoundIndex),
                     isModalOpen: false,
@@ -170,11 +109,16 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
                 employees: action.employees, isModalOpen: false,
                 current: state.current
             };
-        case 'OPEN_CREATE_MODAL':
-            return {
-                employees: state.employees,
-                isModalOpen: true,
-                current: {} as EmployeeState
+        case 'OPEN_NEW_MODAL':
+            {
+                const newEmployee: EmployeeState = {
+                    id: -1, name: '', surname: '', patronymic: '', organization: '', position: '', links: [], state: State.New
+                };
+                return {
+                    employees: state.employees,
+                    isModalOpen: true,
+                    current: newEmployee
+                };
             }
         case 'OPEN_EDIT_MODAL':
             return {
@@ -188,6 +132,18 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
                 isModalOpen: false,
                 current: state.current
             }
+        case 'SET_EMPLOYEE_NAME':
+            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
+        case 'SET_EMPLOYEE_POSITION':
+            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
+        case 'CREATE_LINK':
+            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
+        case 'UPDATE_LINK':
+            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
+        case 'DELETE_LINK':
+            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
+        case 'SAVE_EMPLOYEE':
+            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
         default:
             return state;
     }

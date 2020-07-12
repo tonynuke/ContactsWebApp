@@ -1,52 +1,10 @@
 ﻿import * as React from 'react';
 import { connect } from 'react-redux';
-import ReactModal from 'react-modal'
 import { ApplicationState } from '../store';
 import * as EmployeesStore from '../store/Employees';
-
-type EmployeeProps =
-    EmployeesStore.EmployeesState // ... state we've requested from the Redux store
-    & typeof EmployeesStore.actionCreators; // ... plus action creators we've requested
-
-class PopUp extends React.PureComponent<EmployeesProps> {
-    render() {
-        return (
-            <div>
-                <ReactModal
-                    isOpen={this.props.isModalOpen}
-                    contentLabel="Create new employee"
-                    ariaHideApp={true}
-                >
-                    <button onClick={this.props.closeModal}>close</button>
-                    <form>
-                        <label>
-                            Name:
-                            <input type="text" value={this.props.current.name} name="name" />
-                        </label>
-                        <label>
-                            Surname:
-                            <input type="text" value={this.props.current.surname} name="surname" />
-                        </label>
-                        <label>
-                            Position:
-                            <input type="text" value={this.props.current.position} name="position" />
-                        </label>
-                    </form>
-                    <button type="button"
-                        className="btn btn-primary btn-lg"
-                        onClick={() => { this.props.createEmployee("vasyan", "developer"); }}>
-                        Save
-                </button>
-                </ReactModal>
-            </div>
-        );
-    }
-}
-
-type EmployeesProps =
-    EmployeesStore.EmployeesState // ... state we've requested from the Redux store
-    & typeof EmployeesStore.actionCreators; // ... plus action creators we've requested
-
+import { Employee, EmployeesProps } from "./Employee";
+import { EmployeeState } from "../store/EmployeeState";
+import ReactModal from 'react-modal'
 
 class Employees extends React.PureComponent<EmployeesProps> {
     // This method is called when the component is first added to the document
@@ -57,19 +15,30 @@ class Employees extends React.PureComponent<EmployeesProps> {
     public render() {
         return (
             <React.Fragment>
-                <h1 id="tabelLabel">Employees</h1>
-                <p>This component demonstrates fetching data from the server and working with URL parameters.</p>
+                <h1>Employees</h1>
                 {this.renderEmployeesTable()}
-                <PopUp {...this.props} />
+                {this.renderModalWindow()}
                 <button type="button"
                     className="btn btn-primary btn-lg"
                     onClick={() => {
-                        this.props.openCreateModal();
+                        this.props.openNewModal();
                     }}>
-                    Create
+                    Create new employee
                 </button>
             </React.Fragment>
         );
+    }
+
+    private renderModalWindow() {
+        if (!this.props.isModalOpen) {
+            return (<div />);
+        }
+        return (<ReactModal
+            isOpen={this.props.isModalOpen}
+            contentLabel="Create new employee"
+            ariaHideApp={false}>
+            <Employee {...this.props} />
+        </ReactModal>);
     }
 
     private ensureDataFetched() {
@@ -91,7 +60,7 @@ class Employees extends React.PureComponent<EmployeesProps> {
                     </tr>
                 </thead>
                 <tbody>
-                    {this.props.employees.map((employee: EmployeesStore.EmployeeState) =>
+                    {this.props.employees.map((employee: EmployeeState) =>
                         <tr key={employee.id}>
                             <td>{employee.id}</td>
                             <td>{employee.name}</td>
@@ -102,15 +71,15 @@ class Employees extends React.PureComponent<EmployeesProps> {
                             <td>
                                 <button type="button"
                                     className="btn btn-primary btn-lg"
-                                    onClick={() => { this.props.deleteEmployee([employee.id]); }}>
-                                    Delete
+                                    onClick={() => { this.props.openEditModal(employee); }}>
+                                    Edit
                                 </button>
                             </td>
                             <td>
                                 <button type="button"
                                     className="btn btn-primary btn-lg"
-                                    onClick={() => { this.props.openEditModal(employee); }}>
-                                    Edit
+                                    onClick={() => { this.props.deleteEmployee(employee.id); }}>
+                                    Delete
                                 </button>
                             </td>
                         </tr>
@@ -123,5 +92,5 @@ class Employees extends React.PureComponent<EmployeesProps> {
 
 export default connect(
     (state: ApplicationState) => state.employees, // Selects which state properties are merged into the component's props
-    EmployeesStore.actionCreators // Selects which action creators are merged into the component's props
+    EmployeesStore.actionCreators, // Selects which action creators are merged into the component's props
 )(Employees as any);

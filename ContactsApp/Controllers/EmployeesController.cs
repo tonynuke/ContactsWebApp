@@ -5,6 +5,7 @@ using AutoMapper;
 using AutoMapper.AspNet.OData;
 using Contacts.WebService.DTO.Employee;
 using Contacts.WebService.Services;
+using Employee.Domain;
 using Employee.Persistence;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Mvc;
@@ -36,22 +37,14 @@ namespace Contacts.WebService.Controllers
         {
             var employee = new Employee.Domain.Employee(dto.Name, dto.Position);
             await this.dbContext.Employees.AddAsync(employee);
+
+            foreach (var link in dto.Links)
+            {
+                employee.AddLink(link.Value, link.LinkType);
+            }
+
             await this.dbContext.SaveChangesAsync();
             return employee.Id;
-        }
-
-        [HttpPut]
-        public async Task CreateOrUpdateEmployee([FromBody] PutEmployeeDTO dto)
-        {
-            //var employee = this.service.GetEmployee(dto.Id);
-            //if (employee.IsFailure)
-            //    throw new Exception(employee.Error);
-
-            //employee.Value.Name = dto.Name;
-            //employee.Value.Surname = dto.Surname;
-            //employee.Value.Position = dto.Position;
-
-            //await this.dbContext.SaveChangesAsync();
         }
 
         [HttpDelete]
