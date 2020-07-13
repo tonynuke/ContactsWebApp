@@ -1,8 +1,10 @@
 ﻿import * as React from 'react';
 import { connect } from 'react-redux';
-import * as EmployeesStore from '../store/Employees';
+import * as EmployeesStore from '../store/EmployeesContainer';
 import { LinkState, EmployeeState } from '../store/EmployeeState';
 import { TextInput } from './TextInput';
+import { DateInput } from './DateInput';
+import { Button, Container, Col, Row, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
 export type EmployeesProps =
     EmployeesStore.EmployeesState // ... state we've requested from the Redux store
@@ -13,87 +15,47 @@ export class Employee extends React.PureComponent<EmployeesProps> {
     render() {
         return (
             <React.Fragment>
-                <h2>Employee info</h2>
-                <table className='table table-striped' aria-labelledby="tabelLabel">
-                    <thead>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <TextInput
-                                handleChange={this.props.setName}
-                                title="Name"
-                                value={this.props.current.name}
-                            />
-                        </tr>
-                        <tr>
-                            <TextInput
-                                handleChange={() => { }}
-                                title="Surname"
-                                value={this.props.current.surname}
-                            />
-                        </tr>
-                        <tr>
-                            <TextInput
-                                handleChange={this.props.setPosition}
-                                title="Position"
-                                value={this.props.current.position}
-                            />
-                        </tr>
-                    </tbody>
-                </table>
-                <h2>Links</h2>
+                <Container>
+                    <TextInput handleChange={this.props.setName} title="Name" value={this.props.current.name} />
+                    <TextInput handleChange={this.props.setSurname} title="Surname" value={this.props.current.surname} />
+                    <TextInput handleChange={this.props.setPatronymic} title="Patronymic" value={this.props.current.patronymic} />
+                    <DateInput handleChange={this.props.setBirthDate} title="BirthDate" value={this.props.current.birthDate} />
+                    <TextInput handleChange={this.props.setOrganization} title="Organization" value={this.props.current.organization} />
+                    <TextInput handleChange={this.props.setPosition} title="Position" value={this.props.current.position} />
+                </Container>
+                Contacts
+                <br />
                 {this.renderLinksTable()}
-                <button type="button"
-                    className="btn btn-primary btn-lg"
-                    onClick={() => {
-                        this.props.createLink("value", "type");
-                    }}>
-                    Create new link
-                </button>
-                <button type="button"
-                    className="btn btn-primary btn-lg"
-                    onClick={() => { this.props.saveEmployee(this.props.current); }}
-                >
-                    Save
-                </button>
-                <button type="button"
-                    className="btn btn-primary btn-lg"
-                    onClick={() => { this.props.closeModal(false); }}
-                >
-                    Close
-                </button>
-            </React.Fragment>
+                <br />
+                <Button color="success"
+                    onClick={() => { this.props.createLink("value", "type"); }}>
+                    Create new contact
+                </Button>
+            </React.Fragment >
         );
     }
 
     private renderLinksTable() {
         return (
-            <table className='table table-striped' aria-labelledby="tabelLabel">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Type</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {this.props.current.links.map((link: LinkState) =>
-                        <tr key={link.id}>
-                            <td>{link.id}</td>
-                            <td>{link.value}</td>
-                            <td>{link.type}</td>
-                            <td>{link.state}</td>
-                            <td>
-                                <button type="button"
-                                    className="btn btn-primary btn-lg"
+            <Container >
+                {this.props.current.links.map((link: LinkState) =>
+                    <Row>
+                        <InputGroup>
+                            <Input type="select" value={link.type} onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.props.setLinkType(link.id, event.target.value)}>
+                                <option>Skype</option>
+                                <option>Email</option>
+                            </Input>
+                            <Input type="text" value={link.value} onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.props.setLinkValue(link.id, event.target.value)} />
+                            <InputGroupAddon addonType="append">
+                                <Button color="danger"
                                     onClick={() => { this.props.deleteLink(link); }}>
                                     Delete
-                                </button>
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+                                </Button>
+                            </InputGroupAddon>
+                        </InputGroup>
+                    </Row>
+                )}
+            </Container>
         );
     }
 }

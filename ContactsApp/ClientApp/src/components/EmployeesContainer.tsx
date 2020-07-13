@@ -1,10 +1,10 @@
 ﻿import * as React from 'react';
 import { connect } from 'react-redux';
 import { ApplicationState } from '../store';
-import * as EmployeesStore from '../store/Employees';
+import * as EmployeesStore from '../store/EmployeesContainer';
 import { Employee, EmployeesProps } from "./Employee";
 import { EmployeeState } from "../store/EmployeeState";
-import ReactModal from 'react-modal'
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, CardBody, Card, Table } from 'reactstrap';
 
 class Employees extends React.PureComponent<EmployeesProps> {
     // This method is called when the component is first added to the document
@@ -18,27 +18,27 @@ class Employees extends React.PureComponent<EmployeesProps> {
                 <h1>Employees</h1>
                 {this.renderEmployeesTable()}
                 {this.renderModalWindow()}
-                <button type="button"
-                    className="btn btn-primary btn-lg"
-                    onClick={() => {
-                        this.props.openNewModal();
-                    }}>
+                <Button color="success"
+                    onClick={() => { this.props.openNewModal(); }}>
                     Create new employee
-                </button>
+                </Button>
             </React.Fragment>
         );
     }
 
     private renderModalWindow() {
-        if (!this.props.isModalOpen) {
-            return (<div />);
-        }
-        return (<ReactModal
-            isOpen={this.props.isModalOpen}
-            contentLabel="Create new employee"
-            ariaHideApp={false}>
-            <Employee {...this.props} />
-        </ReactModal>);
+        return (
+            <Modal isOpen={this.props.isModalOpen} toggle={() => this.props.closeModal(false)}>
+                <ModalHeader toggle={() => this.props.closeModal(false)}>Edit employee</ModalHeader>
+                <ModalBody>
+                    <Employee {...this.props} />
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={() => this.props.saveEmployee(this.props.current)}>Save</Button>
+                    <Button color="secondary" onClick={() => this.props.closeModal(false)}>Cancel</Button>
+                </ModalFooter>
+            </Modal>
+        );
     }
 
     private ensureDataFetched() {
@@ -47,45 +47,42 @@ class Employees extends React.PureComponent<EmployeesProps> {
 
     private renderEmployeesTable() {
         return (
-            <table className='table table-striped' aria-labelledby="tabelLabel">
+            <Table>
                 <thead>
                     <tr>
-                        <th>Id</th>
                         <th>Name</th>
                         <th>Surname</th>
                         <th>Patronymic</th>
+                        <th>BirthDate</th>
                         <th>Organization</th>
                         <th>Position</th>
-
                     </tr>
                 </thead>
                 <tbody>
                     {this.props.employees.map((employee: EmployeeState) =>
                         <tr key={employee.id}>
-                            <td>{employee.id}</td>
                             <td>{employee.name}</td>
                             <td>{employee.surname}</td>
                             <td>{employee.patronymic}</td>
+                            <td>{new Date(employee.birthDate).toLocaleDateString()}</td>
                             <td>{employee.organization}</td>
                             <td>{employee.position}</td>
                             <td>
-                                <button type="button"
-                                    className="btn btn-primary btn-lg"
+                                <Button color="primary"
                                     onClick={() => { this.props.openEditModal(employee); }}>
                                     Edit
-                                </button>
+                                </Button>
                             </td>
                             <td>
-                                <button type="button"
-                                    className="btn btn-primary btn-lg"
+                                <Button color="danger"
                                     onClick={() => { this.props.deleteEmployee(employee.id); }}>
                                     Delete
-                                </button>
+                                </Button>
                             </td>
                         </tr>
                     )}
                 </tbody>
-            </table>
+            </Table>
         );
     }
 }

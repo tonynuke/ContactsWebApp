@@ -3,6 +3,7 @@ using System.Linq;
 using CSharpFunctionalExtensions;
 using Employee.Domain;
 using Employee.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Contacts.WebService.Services
 {
@@ -30,7 +31,8 @@ namespace Contacts.WebService.Services
 
         public Result<Employee.Domain.Employee> GetEmployee(long employeeId)
         {
-            var employee = this.dbContext.Employees.SingleOrDefault(e => e.Id == employeeId);
+            var employee = this.dbContext.Employees.Where(e => e.Id == employeeId)
+                .Include(e => e.Links).SingleOrDefault();
             return employee == null
                 ? Result.Failure<Employee.Domain.Employee>($"Employee with id {employeeId} not found")
                 : Result.Ok(employee);

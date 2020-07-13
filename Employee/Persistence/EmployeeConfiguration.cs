@@ -30,15 +30,10 @@ namespace Employee.Persistence
                 .HasColumnName(nameof(Domain.Employee.Position))
                 .IsRequired();
 
-            //builder.HasMany(e => e.Links).WithOne().OnDelete(DeleteBehavior.Cascade);
-
             builder.HasMany(x => x.Links).WithOne()
                 .OnDelete(DeleteBehavior.Cascade)
-                .Metadata.PrincipalToDependent // x.MyTransitions
+                .Metadata.PrincipalToDependent
                 .SetPropertyAccessMode(PropertyAccessMode.Field);
-
-            //var links = builder.Metadata.FindNavigation(nameof(Domain.Employee.Links));
-            //links.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }

@@ -12,7 +12,6 @@ namespace Contacts.WebService.DTO.Employee
         public string Organization { get; set; }
         public string Position { get; set; }
         public DateTime BirthDate { get; set; }
-
         public IReadOnlyList<CreateLinkDTO> Links { get; set; } = new List<CreateLinkDTO>();
     }
 }

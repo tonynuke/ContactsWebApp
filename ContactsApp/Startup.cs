@@ -3,6 +3,7 @@ using AutoMapper;
 using Contacts.WebService.DTO;
 using Contacts.WebService.DTO.Employee;
 using Contacts.WebService.DTO.Link;
+using Contacts.WebService.Services;
 using Employee.Persistence;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
@@ -54,14 +55,11 @@ namespace Contacts.WebService
                 mc.AddProfile(new MappingProfile());
             });
 
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
+            services.AddSingleton(mapper => mappingConfig.CreateMapper());
+            services.AddScoped(mc => new GetterService(mc.GetService<EmployeeDbContext>()));
 
             services.AddControllers(mvcOptions =>
                 mvcOptions.EnableEndpointRouting = false);
-
-            //services.AddMvc()
-            //    .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
             services.AddOData();
         }
