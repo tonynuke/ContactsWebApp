@@ -4,11 +4,15 @@ import * as EmployeesStore from '../store/EmployeesContainer';
 import { ContactState, EmployeeState } from '../store/EmployeeState';
 import { TextInput } from './TextInput';
 import { DateInput } from './DateInput';
-import { EmployeesProps } from './EmployeesProps';
 import { Contacts } from './Contacts';
 import { Container } from 'reactstrap';
 
-export const Employee: FunctionComponent<EmployeesProps> = (props) =>
+export type EmployeeProps =
+    EmployeesStore.EmployeesState
+    & typeof EmployeesStore.actionCreators
+
+
+export const Employee: FunctionComponent<EmployeeProps> = (props) =>
     <React.Fragment>
         <Container>
             <TextInput handleChange={props.setName} title="Name" value={props.current.name} />

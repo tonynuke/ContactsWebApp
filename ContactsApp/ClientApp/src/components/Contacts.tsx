@@ -3,9 +3,13 @@ import { connect } from 'react-redux';
 import * as EmployeesStore from '../store/EmployeesContainer';
 import { ContactState, ContactType } from '../store/EmployeeState';
 import { Button, Container, Row, Input, InputGroup, InputGroupAddon } from 'reactstrap';
-import { EmployeesProps } from './EmployeesProps';
 
-export const Contacts: FunctionComponent<EmployeesProps> = (props) =>
+export type ContactsProps =
+    EmployeesStore.EmployeesState
+    & typeof EmployeesStore.actionCreators
+
+
+export const Contacts: FunctionComponent<ContactsProps> = (props) =>
     <React.Fragment>
         <Container >
             {props.current.contacts.map((contact: ContactState) =>

@@ -3,9 +3,12 @@ import { connect } from 'react-redux';
 import { ApplicationState } from '../store';
 import * as EmployeesStore from '../store/EmployeesContainer';
 import { Employee } from "./Employee";
-import { EmployeesProps } from './EmployeesProps';
 import { EmployeeState } from "../store/EmployeeState";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, CardBody, Card, Table } from 'reactstrap';
+
+export type EmployeesProps =
+    EmployeesStore.EmployeesState
+    & typeof EmployeesStore.actionCreators
 
 class Employees extends React.PureComponent<EmployeesProps> {
     // This method is called when the component is first added to the document
