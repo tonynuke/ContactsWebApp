@@ -8,7 +8,7 @@ namespace Emploee.UnitTests
         [Test]
         public void Test1()
         {
-            String name = (String) "";
+            Name name = (Name) "";
         }
     }
 }

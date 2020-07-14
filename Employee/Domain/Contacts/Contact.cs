@@ -20,7 +20,7 @@ namespace Employee.Domain.Contacts
             {
                 return EmailValidator.IsValid(value) ?
                     Result.Ok(new Contact(type, value)) :
-                    Result.Failure<Contact>("Email is not valid");
+                    Result.Failure<Contact>($"{value} is not valid Email");
             }
 
             return string.IsNullOrWhiteSpace(value) ?

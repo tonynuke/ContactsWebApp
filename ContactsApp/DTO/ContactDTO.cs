@@ -1,12 +1,15 @@
-﻿using Employee.Domain;
+﻿using System.ComponentModel.DataAnnotations;
 using Employee.Domain.Contacts;
 
-namespace Contacts.WebService.DTO.Contact
+namespace Contacts.WebService.DTO
 {
     public class ContactDTO
     {
-        public long Id { get; set; }
+        [Required]
         public ContactType Type { get; set; }
+
+        [Required]
+        [StringLength(100)]
         public string Value { get; set; }
     }
 }

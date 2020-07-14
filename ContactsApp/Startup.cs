@@ -1,8 +1,6 @@
 using System.Text.Json.Serialization;
 using AutoMapper;
 using Contacts.WebService.DTO;
-using Contacts.WebService.DTO.Employee;
-using Contacts.WebService.DTO.Contact;
 using Employee.Persistence;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
@@ -121,7 +119,7 @@ namespace Contacts.WebService
             odataBuilder.EnableLowerCamelCase();
 
             odataBuilder.EntityType<ContactDTO>()
-                .HasKey(entity => entity.Id);
+                .HasKey(entity => entity.Value);
 
             odataBuilder.EntitySet<EmployeeDTO>(routeName).EntityType
                 .HasKey(entity => entity.Id)

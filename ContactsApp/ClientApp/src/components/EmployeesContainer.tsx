@@ -32,14 +32,14 @@ class Employees extends React.PureComponent<EmployeesProps> {
 
     private renderModalWindow() {
         return (
-            <Modal isOpen={this.props.isModalOpen} toggle={() => this.props.closeModal(false)}>
-                <ModalHeader toggle={() => this.props.closeModal(false)}>Edit employee</ModalHeader>
+            <Modal isOpen={this.props.isModalOpen} toggle={this.props.closeModal}>
+                <ModalHeader toggle={this.props.closeModal}>Edit employee</ModalHeader>
                 <ModalBody>
                     <Employee {...this.props} />
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" onClick={() => this.props.saveEmployee(this.props.current)}>Save</Button>
-                    <Button color="secondary" onClick={() => this.props.closeModal(false)}>Cancel</Button>
+                    <Button color="secondary" onClick={this.props.closeModal}>Cancel</Button>
                 </ModalFooter>
             </Modal>
         );

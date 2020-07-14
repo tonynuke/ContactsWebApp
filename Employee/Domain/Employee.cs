@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Employee.Domain.Contacts;
 
 namespace Employee.Domain
@@ -9,15 +8,14 @@ namespace Employee.Domain
     {
         public long Id { get; }
 
-        public String Position { get; set; }
+        public Name Name { get; set; }
 
-        public String Name { get; set; }
+        public string Surname { get; set; }
 
-        public String Surname { get; set; }
+        public string Patronymic { get; set; }
 
-        public String Patronymic { get; set; }
-
-        public String Organization { get; set; }
+        public string Organization { get; set; }
+        public string Position { get; set; }
 
         public DateTime BirthDate { get; set; }
 
@@ -45,7 +43,7 @@ namespace Employee.Domain
         {
         }
 
-        public Employee(String name, String position)
+        public Employee(Name name, Name position)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.Position = position ?? throw new ArgumentNullException(nameof(position));

@@ -3,37 +3,37 @@ using CSharpFunctionalExtensions;
 
 namespace Employee.Domain
 {
-    public class String : IEquatable<String>
+    public class Name : IEquatable<Name>
     {
         public string Value { get; }
 
-        public static Result<String> Create(string value)
+        public static Result<Name> Create(string name)
         {
-            return string.IsNullOrWhiteSpace(value) ? 
-                Result.Failure<String>("Value can't be empty") : 
-                Result.Ok(new String(value));
+            return string.IsNullOrWhiteSpace(name) ? 
+                Result.Failure<Name>("Name can't be empty") : 
+                Result.Ok(new Name(name));
         }
 
-        private String(string value)
+        private Name(string value)
         {
             this.Value = value;
         }
 
-        private String()
+        private Name()
         {
         }
 
-        public static implicit operator string(String value)
+        public static implicit operator string(Name value)
         {
             return value.Value;
         }
 
-        public static implicit operator String(string value)
+        public static implicit operator Name(string value)
         {
             return Create(value).Value;
         }
 
-        public bool Equals(String other)
+        public bool Equals(Name other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -45,7 +45,7 @@ namespace Employee.Domain
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((String)obj);
+            return Equals((Name)obj);
         }
 
         public override int GetHashCode()

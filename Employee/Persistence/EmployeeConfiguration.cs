@@ -14,21 +14,13 @@ namespace Employee.Persistence
                 .Property(name => name.Value)
                 .HasColumnName(nameof(Domain.Employee.Name))
                 .IsRequired();
-            builder.OwnsOne(person => person.Surname)
-                .Property(name => name.Value)
-                .HasColumnName(nameof(Domain.Employee.Surname));
-            builder.OwnsOne(person => person.Patronymic)
-                .Property(name => name.Value)
-                .HasColumnName(nameof(Domain.Employee.Patronymic));
-            builder.OwnsOne(person => person.Organization)
-                .Property(name => name.Value)
-                .HasColumnName(nameof(Domain.Employee.Organization));
+
+            builder.Property(person => person.Surname);
+            builder.Property(person => person.Patronymic);
             builder.Property(person => person.BirthDate);
 
-            builder.OwnsOne(employee => employee.Position)
-                .Property(name => name.Value)
-                .HasColumnName(nameof(Domain.Employee.Position))
-                .IsRequired();
+            builder.Property(person => person.Organization);
+            builder.Property(employee => employee.Position);
 
             builder.OwnsMany(employee => employee.Contacts,
                 navigationBuilder =>

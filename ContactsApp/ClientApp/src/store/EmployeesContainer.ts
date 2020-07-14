@@ -90,13 +90,13 @@ export const actionCreators = {
     openEditModal: (employee: EmployeeState): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'OPEN_EDIT_MODAL', employee: employee });
     },
-    closeModal: (needSave: boolean): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    closeModal: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'CLOSE_MODAL' });
     },
     deleteEmployee: (id: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
         const request: RequestInit = {
             method: 'DELETE',
-            body: JSON.stringify({ ids: [id] }),
+            body: JSON.stringify({ id: id }),
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'

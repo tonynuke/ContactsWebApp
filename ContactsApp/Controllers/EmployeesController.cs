@@ -1,31 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.AspNet.OData;
-using Contacts.WebService.DTO.Employee;
-using Employee.Domain;
+using Contacts.WebService.DTO;
+using CSharpFunctionalExtensions;
 using Employee.Domain.Contacts;
 using Employee.Persistence;
 using Microsoft.AspNet.OData.Query;
-using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using String = System.String;
 
 namespace Contacts.WebService.Controllers
 {
+    [ApiController]
     [Route("[controller]")]
     public class EmployeesController : ControllerBase
     {
-        private readonly ILogger<EmployeesController> logger;
-
         private readonly EmployeeDbContext dbContext;
 
         private readonly IMapper mapper;
 
-        [ODataRoute("a")]
         [HttpGet]
         public Task<IQueryable<EmployeeDTO>> Get(ODataQueryOptions<EmployeeDTO> options)
         {
@@ -47,33 +43,31 @@ namespace Contacts.WebService.Controllers
 
             await this.dbContext.Employees.AddAsync(employee);
 
-            var contacts = dto.Contacts.Select(contact => Contact.Create(contact.Type, contact.Value)).ToList();
-            var errors = contacts.Where(contact => contact.IsFailure).Select(contact => contact.Error).ToList();
-            if (errors.Any())
-            {
-                string errorMessage = string.Join(" ", errors);
-                throw new Exception(errorMessage);
-            }
+            var contacts = this.GetContactsFromDTO(dto.Contacts);
+            if (contacts.IsFailure)
+                return BadRequest($"Can't update contacts due to errors: {contacts.Error}");
 
-            foreach (var contact in contacts)
-            {
-                employee.AddContact(contact.Value);
-            }
+            employee.AddContacts(contacts.Value);
 
             await this.dbContext.SaveChangesAsync();
-            
+
             return Ok();
         }
 
+        private Result<IEnumerable<Contact>> GetContactsFromDTO(IEnumerable<ContactDTO> contacts)
+        {
+            return contacts.Select(contact => Contact.Create(contact.Type, contact.Value)).Combine();
+        }
+
         [HttpPut]
-        public async Task UpdateEmployee([FromBody] PutEmployeeDTO dto)
+        public async Task<IActionResult> UpdateEmployee([FromBody] PutEmployeeDTO dto)
         {
             var employee = await this.dbContext.Employees
                 .Where(e => e.Id == dto.Id)
                 .Include(e => e.Contacts).SingleOrDefaultAsync();
 
             if (employee == null)
-                throw new Exception($"Employee with id {dto.Id} not found");
+                return BadRequest($"Employee with id {dto.Id} not found");
 
             employee.Name = dto.Name;
             employee.Surname = dto.Surname;
@@ -82,37 +76,31 @@ namespace Contacts.WebService.Controllers
             employee.Organization = dto.Organization;
             employee.Position = dto.Position;
 
-            employee.ClearContacts();
+            var contacts = this.GetContactsFromDTO(dto.Contacts);
+            if (contacts.IsFailure)
+                return BadRequest($"Can't update contacts due to errors: {contacts.Error}");
 
-            var contacts = dto.Contacts.Select(contact => Contact.Create(contact.Type, contact.Value)).ToList();
-            var errors = contacts.Where(contact => contact.IsFailure).Select(contact => contact.Error).ToList();
-            if (errors.Any())
-            {
-                string errorMessage = string.Join(" ", errors);
-                throw new Exception(errorMessage);
-            }
+            employee.ClearContacts();
+            employee.AddContacts(contacts.Value);
 
             await this.dbContext.SaveChangesAsync();
+
+            return Ok();
         }
 
         [HttpDelete]
         public async Task DeleteEmployee([FromBody] DeleteEmployeeDTO dto)
         {
-            foreach (var id in dto.Ids)
+            var employee = await this.dbContext.Employees.SingleOrDefaultAsync(org => org.Id == dto.Id);
+            if (employee != null)
             {
-                var employee = await this.dbContext.Employees.SingleOrDefaultAsync(org => org.Id == id);
-                if (employee != null)
-                {
-                    this.dbContext.Employees.Remove(employee);
-                }
+                this.dbContext.Employees.Remove(employee);
+                await this.dbContext.SaveChangesAsync();
             }
-
-            await this.dbContext.SaveChangesAsync();
         }
 
-        public EmployeesController(ILogger<EmployeesController> logger, EmployeeDbContext dbContext, IMapper mapper)
+        public EmployeesController(EmployeeDbContext dbContext, IMapper mapper)
         {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
