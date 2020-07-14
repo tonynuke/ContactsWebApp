@@ -1,15 +1,12 @@
 ﻿import * as React from 'react';
 import { connect } from 'react-redux';
 import * as EmployeesStore from '../store/EmployeesContainer';
-import { LinkState, EmployeeState } from '../store/EmployeeState';
+import { ContactState, EmployeeState } from '../store/EmployeeState';
 import { TextInput } from './TextInput';
 import { DateInput } from './DateInput';
-import { Button, Container, Col, Row, Input, InputGroup, InputGroupAddon } from 'reactstrap';
-
-export type EmployeesProps =
-    EmployeesStore.EmployeesState // ... state we've requested from the Redux store
-    & typeof EmployeesStore.actionCreators // ... plus action creators we've requested
-
+import { EmployeesProps } from './EmployeesProps';
+import { Contacts } from './Contacts';
+import { Button, Container, Row, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
 export class Employee extends React.PureComponent<EmployeesProps> {
     render() {
@@ -25,42 +22,13 @@ export class Employee extends React.PureComponent<EmployeesProps> {
                 </Container>
                 Contacts
                 <br />
-                {this.renderLinksTable()}
-                <br />
-                <Button color="success"
-                    onClick={() => { this.props.createLink("value", "type"); }}>
-                    Create new contact
-                </Button>
+                <Contacts {...this.props} />
             </React.Fragment >
-        );
-    }
-
-    private renderLinksTable() {
-        return (
-            <Container >
-                {this.props.current.links.map((link: LinkState) =>
-                    <Row>
-                        <InputGroup>
-                            <Input type="select" value={link.type} onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.props.setLinkType(link.id, event.target.value)}>
-                                <option>Skype</option>
-                                <option>Email</option>
-                            </Input>
-                            <Input type="text" value={link.value} onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.props.setLinkValue(link.id, event.target.value)} />
-                            <InputGroupAddon addonType="append">
-                                <Button color="danger"
-                                    onClick={() => { this.props.deleteLink(link); }}>
-                                    Delete
-                                </Button>
-                            </InputGroupAddon>
-                        </InputGroup>
-                    </Row>
-                )}
-            </Container>
         );
     }
 }
 
 export default connect(
-    (state: EmployeeState) => state, // Selects which state properties are merged into the component's props
-    EmployeesStore.actionCreators // Selects which action creators are merged into the component's props
+    (state: EmployeeState) => state,
+    EmployeesStore.actionCreators
 )(Employee as any);

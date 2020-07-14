@@ -1,9 +1,9 @@
 ﻿namespace Employee.Domain
 {
-    public class Link
+    public class Contact
     {
         public long Id { get; private set; }
-        public LinkType Type { get; set; }
+        public ContactType Type { get; set; }
         public string Value { get; set; }
     }
 }

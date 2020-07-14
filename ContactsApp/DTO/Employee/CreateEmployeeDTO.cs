@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Contacts.WebService.DTO.Link;
+using Contacts.WebService.DTO.Contact;
 
 namespace Contacts.WebService.DTO.Employee
 {
@@ -12,6 +12,6 @@ namespace Contacts.WebService.DTO.Employee
         public string Organization { get; set; }
         public string Position { get; set; }
         public DateTime BirthDate { get; set; }
-        public IReadOnlyList<CreateLinkDTO> Links { get; set; } = new List<CreateLinkDTO>();
+        public IReadOnlyList<ContactDTO> Contacts { get; set; } = new List<ContactDTO>();
     }
 }

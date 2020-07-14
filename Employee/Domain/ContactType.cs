@@ -1,6 +1,6 @@
 ﻿namespace Employee.Domain
 {
-    public enum LinkType
+    public enum ContactType
     {
         Skype,
         Email

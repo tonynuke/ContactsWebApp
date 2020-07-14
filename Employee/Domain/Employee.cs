@@ -20,32 +20,27 @@ namespace Employee.Domain
 
         public DateTime BirthDate { get; set; }
 
-        private readonly List<Link> links = new List<Link>();
+        private readonly List<Contact> contacts = new List<Contact>();
 
-        public IReadOnlyCollection<Link> Links => this.links;
+        public IReadOnlyCollection<Contact> Contacts => this.contacts;
 
-        public Link AddLink(string value, LinkType type)
+        public Contact AddContact(string value, ContactType type)
         {
-            var link = new Link { Value = value, Type = type };
-            this.links.Add(link);
-            return link;
+            var contact = new Contact { Value = value, Type = type };
+            this.contacts.Add(contact);
+            return contact;
         }
 
-        public void RemoveLink(long id)
+        public void RemoveContact(long id)
         {
-            var link = this.links.SingleOrDefault(e => e.Id == id);
-            if (link != null)
-                this.RemoveLink(link);
+            var contact = this.contacts.SingleOrDefault(e => e.Id == id);
+            if (contact != null)
+                this.RemoveContact(contact);
         }
 
-        public void RemoveAllLinks()
+        public void RemoveContact(Contact contact)
         {
-            this.links.Clear();
-        }
-
-        public void RemoveLink(Link link)
-        {
-            this.links.Remove(link);
+            this.contacts.Remove(contact);
         }
 
         private Employee()

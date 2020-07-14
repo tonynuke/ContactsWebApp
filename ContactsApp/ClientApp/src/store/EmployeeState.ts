@@ -1,7 +1,9 @@
-export interface LinkState {
+export interface ContactState {
     id: number;
     value: string;
     type: string;
+
+    isValid: boolean;
 }
 
 export interface EmployeeState {
@@ -13,7 +15,7 @@ export interface EmployeeState {
     position: string;
     organization: string;
 
-    tmpLinkId: number;
+    tmpContactId: number;
 
-    links: LinkState[];
+    contacts: ContactState[];
 }

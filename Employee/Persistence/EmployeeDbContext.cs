@@ -9,7 +9,7 @@ namespace Employee.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
-            modelBuilder.ApplyConfiguration(new LinkConfiguration());
+            modelBuilder.ApplyConfiguration(new ContactConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

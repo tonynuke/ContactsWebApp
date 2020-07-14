@@ -1,11 +1,11 @@
 ﻿using Employee.Domain;
 
-namespace Contacts.WebService.DTO.Link
+namespace Contacts.WebService.DTO.Contact
 {
-    public class LinkDTO
+    public class ContactDTO
     {
         public long Id { get; set; }
-        public LinkType Type { get; set; }
+        public ContactType Type { get; set; }
         public string Value { get; set; }
     }
 }

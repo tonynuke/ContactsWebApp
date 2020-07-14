@@ -1,6 +1,6 @@
 import { Action, Reducer } from 'redux';
 import { KnownAction } from './EmployeeActions';
-import { EmployeeState, LinkState } from './EmployeeState';
+import { EmployeeState, ContactState } from './EmployeeState';
 
 export const unloadedState: EmployeeState = {
     id: -1,
@@ -10,8 +10,8 @@ export const unloadedState: EmployeeState = {
     position: '',
     organization: '',
     birthDate: new Date(),
-    tmpLinkId: -1,
-    links: []
+    tmpContactId: -1,
+    contacts: []
 };
 
 export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined, incomingAction: Action): EmployeeState => {
@@ -33,36 +33,36 @@ export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined
             return Object.assign({}, state, { organization: action.organization });
         case 'SET_EMPLOYEE_POSITION':
             return Object.assign({}, state, { position: action.position });
-        case 'CREATE_LINK':
+        case 'CREATE_CONTACT':
             {
                 // используем отрицательные id для новых контактов
-                const nextId: number = state.tmpLinkId > 0 || state.tmpLinkId === undefined ? -1 : state.tmpLinkId - 1;
-                const newLink: LinkState = { id: nextId, type: action.newType, value: action.newValue };
+                const nextId: number = state.tmpContactId > 0 || state.tmpContactId === undefined ? -1 : state.tmpContactId - 1;
+                const newContact: ContactState = { id: nextId, type: action.newType, value: action.newValue, isValid: false };
 
-                return Object.assign({}, state, { links: [...state.links, newLink], tmpLinkId: nextId });
+                return Object.assign({}, state, { contacts: [...state.contacts, newContact], tmpContactId: nextId });
             }
-        case 'SET_LINK_VALUE':
+        case 'SET_CONTACT_VALUE':
             return Object.assign({}, state,
                 {
-                    links: state.links.map(link => {
-                        if (link.id === action.id) {
-                            return Object.assign({}, link, { value: action.value });
+                    contacts: state.contacts.map(contact => {
+                        if (contact.id === action.id) {
+                            return Object.assign({}, contact, { value: action.value });
                         }
-                        return link;
+                        return contact;
                     })
                 });
-        case 'SET_LINK_TYPE':
+        case 'SET_CONTACT_TYPE':
             return Object.assign({}, state,
                 {
-                    links: state.links.map(link => {
-                        if (link.id === action.id) {
-                            return Object.assign({}, link, { type: action.linkType });
+                    contacts: state.contacts.map(contact => {
+                        if (contact.id === action.id) {
+                            return Object.assign({}, contact, { type: action.contactType });
                         }
-                        return link;
+                        return contact;
                     })
                 });
-        case 'DELETE_LINK':
-            return Object.assign({}, state, { links: state.links.filter(link => link.id !== action.link.id) });
+        case 'DELETE_CONTACT':
+            return Object.assign({}, state, { contacts: state.contacts.filter(contact => contact.id !== action.id) });
         default:
             return state;
     }

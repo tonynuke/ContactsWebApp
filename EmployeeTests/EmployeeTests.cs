@@ -37,7 +37,7 @@ namespace Employee.IntegrationTests
             var dto = dbContext.Employees.ToList();
 
             var employee = new Domain.Employee("developer", "vasya");
-            employee.AddLink("live:nickname", LinkType.Skype);
+            employee.AddContact("live:nickname", ContactType.Skype);
             await dbContext.Employees.AddAsync(employee);
 
             await dbContext.SaveChangesAsync();

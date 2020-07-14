@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Contacts.WebService.DTO.Employee;
-using Contacts.WebService.DTO.Link;
+using Contacts.WebService.DTO.Contact;
 
 namespace Contacts.WebService.DTO
 {
@@ -8,7 +8,7 @@ namespace Contacts.WebService.DTO
     {
         public MappingProfile()
         {
-            CreateMap<global::Employee.Domain.Link, LinkDTO>();
+            CreateMap<global::Employee.Domain.Contact, ContactDTO>();
 
             CreateMap<global::Employee.Domain.Employee, EmployeeDTO>()
                 .ForMember(nameof(EmployeeDTO.Name), opt => opt.MapFrom(c => c.Name.Value))

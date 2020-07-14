@@ -2,7 +2,8 @@
 import { connect } from 'react-redux';
 import { ApplicationState } from '../store';
 import * as EmployeesStore from '../store/EmployeesContainer';
-import { Employee, EmployeesProps } from "./Employee";
+import { Employee } from "./Employee";
+import { EmployeesProps } from './EmployeesProps';
 import { EmployeeState } from "../store/EmployeeState";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, CardBody, Card, Table } from 'reactstrap';
 

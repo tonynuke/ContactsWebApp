@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.AspNet.OData;
 using Contacts.WebService.DTO.Employee;
-using Contacts.WebService.Services;
 using Employee.Persistence;
 using Microsoft.AspNet.OData.Query;
+using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -22,8 +22,7 @@ namespace Contacts.WebService.Controllers
 
         private readonly IMapper mapper;
 
-        private readonly GetterService service;
-
+        [ODataRoute("a")]
         [HttpGet]
         public Task<IQueryable<EmployeeDTO>> Get(ODataQueryOptions<EmployeeDTO> options)
         {
@@ -45,9 +44,9 @@ namespace Contacts.WebService.Controllers
 
             await this.dbContext.Employees.AddAsync(employee);
 
-            foreach (var link in dto.Links)
+            foreach (var contact in dto.Contacts)
             {
-                employee.AddLink(link.Value, link.LinkType);
+                employee.AddContact(contact.Value, contact.Type);
             }
 
             await this.dbContext.SaveChangesAsync();
@@ -57,35 +56,38 @@ namespace Contacts.WebService.Controllers
         [HttpPut]
         public async Task UpdateEmployee([FromBody] PutEmployeeDTO dto)
         {
-            var employee = this.service.GetEmployee(dto.Id);
-            if (employee.IsFailure)
-                throw new Exception(employee.Error);
+            var employee = await this.dbContext.Employees
+                .Where(e => e.Id == dto.Id)
+                .Include(e => e.Contacts).SingleOrDefaultAsync();
 
-            employee.Value.Name = dto.Name;
-            employee.Value.Surname = dto.Surname;
-            employee.Value.Patronymic = dto.Patronymic;
-            employee.Value.BirthDate = dto.BirthDate;
-            employee.Value.Organization = dto.Organization;
-            employee.Value.Position = dto.Position;
+            if (employee == null)
+                throw new Exception($"Employee with id {dto.Id} not found");
 
-            var linksToCreate = dto.Links.Where(link => link.Id < 0).ToList();
-            var linksIdsToDelete = employee.Value.Links.Select(link => link.Id)
-                .Except(dto.Links.Select(link => link.Id)).ToList();
-            var linksIdsToChange = employee.Value.Links.Select(link => link.Id)
-                .Intersect(dto.Links.Select(link => link.Id)).ToList();
+            employee.Name = dto.Name;
+            employee.Surname = dto.Surname;
+            employee.Patronymic = dto.Patronymic;
+            employee.BirthDate = dto.BirthDate;
+            employee.Organization = dto.Organization;
+            employee.Position = dto.Position;
 
-            foreach (var link in linksToCreate)
-                employee.Value.AddLink(link.Value, link.LinkType);
+            var contactsToCreate = dto.Contacts.Where(contact=> contact.Id < 0).ToList();
+            var contactsIdsToDelete = employee.Contacts.Select(contact => contact.Id)
+                .Except(dto.Contacts.Select(contact => contact.Id)).ToList();
+            var contactsIdsToChange = employee.Contacts.Select(contact => contact.Id)
+                .Intersect(dto.Contacts.Select(contact => contact.Id)).ToList();
 
-            foreach (var linkId in linksIdsToDelete)
-                employee.Value.RemoveLink(linkId);
+            foreach (var contact in contactsToCreate)
+                employee.AddContact(contact.Value, contact.Type);
 
-            foreach (var linkId in linksIdsToChange)
+            foreach (var contactId in contactsIdsToDelete)
+                employee.RemoveContact(contactId);
+
+            foreach (var contactId in contactsIdsToChange)
             {
-                var dtoLink = dto.Links.Single(link => link.Id == linkId);
-                var linkToChange = employee.Value.Links.Single(link => link.Id == linkId);
-                linkToChange.Value = dtoLink.Value;
-                linkToChange.Type = dtoLink.LinkType;
+                var dtoContact = dto.Contacts.Single(contact => contact.Id == contactId);
+                var contactToChange = employee.Contacts.Single(contact => contact.Id == contactId);
+                contactToChange.Value = dtoContact.Value;
+                contactToChange.Type = dtoContact.Type;
             }
 
             await this.dbContext.SaveChangesAsync();
@@ -106,13 +108,11 @@ namespace Contacts.WebService.Controllers
             await this.dbContext.SaveChangesAsync();
         }
 
-        public EmployeesController(ILogger<EmployeesController> logger, EmployeeDbContext dbContext, IMapper mapper,
-            GetterService service)
+        public EmployeesController(ILogger<EmployeesController> logger, EmployeeDbContext dbContext, IMapper mapper)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            this.service = service ?? throw new ArgumentNullException(nameof(service));
         }
     }
 }

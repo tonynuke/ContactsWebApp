@@ -2,7 +2,7 @@ import { Action, Reducer } from 'redux';
 import { AppThunkAction } from '.';
 import buildQuery from 'odata-query'
 import * as Employee from "./EmployeeActions";
-import { EmployeeState, LinkState } from "./EmployeeState";
+import { EmployeeState, ContactState } from "./EmployeeState";
 import * as EmployeeReducer from "./EmployeeReducer";
 
 interface OdataEmployeesState {
@@ -57,7 +57,7 @@ export const actionCreators = {
             .then(response => {
                 if (response.status === 200) {
                     const appState = getState();
-                    const expand = 'Links';
+                    const expand = 'Contacts';
                     const query = buildQuery({ expand });
                     if (appState && appState.employees) {
                         fetch(`odata/employees${query}`)
@@ -74,7 +74,7 @@ export const actionCreators = {
     requestEmployees: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
         const appState = getState();
-        const expand = 'Links';
+        const expand = 'Contacts';
         const query = buildQuery({ expand });
         if (appState && appState.employees) {
             fetch(`odata/employees${query}`)
@@ -131,7 +131,7 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
             {
                 const newEmployee: EmployeeState =
                 {
-                    id: -1, name: '', surname: '', patronymic: '', organization: '', position: '', birthDate: new Date(), links: [], tmpLinkId: -1
+                    id: -1, name: '', surname: '', patronymic: '', organization: '', position: '', birthDate: new Date(), contacts: [], tmpContactId: -1
                 };
                 return Object.assign({}, state, { isModalOpen: true, current: newEmployee });
             }
@@ -158,13 +158,13 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
         case 'SET_EMPLOYEE_POSITION':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
 
-        case 'CREATE_LINK':
+        case 'CREATE_CONTACT':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
-        case 'SET_LINK_VALUE':
+        case 'SET_CONTACT_VALUE':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
-        case 'SET_LINK_TYPE':
+        case 'SET_CONTACT_TYPE':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
-        case 'DELETE_LINK':
+        case 'DELETE_CONTACT':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
         case 'SAVE_EMPLOYEE':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }

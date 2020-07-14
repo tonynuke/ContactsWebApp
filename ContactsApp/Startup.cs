@@ -1,9 +1,8 @@
-using System.Text.Json;
+using System.Text.Json.Serialization;
 using AutoMapper;
 using Contacts.WebService.DTO;
 using Contacts.WebService.DTO.Employee;
-using Contacts.WebService.DTO.Link;
-using Contacts.WebService.Services;
+using Contacts.WebService.DTO.Contact;
 using Employee.Persistence;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
@@ -16,7 +15,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
-using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Contacts.WebService
 {
@@ -56,10 +56,9 @@ namespace Contacts.WebService
             });
 
             services.AddSingleton(mapper => mappingConfig.CreateMapper());
-            services.AddScoped(mc => new GetterService(mc.GetService<EmployeeDbContext>()));
 
-            services.AddControllers(mvcOptions =>
-                mvcOptions.EnableEndpointRouting = false);
+            services.AddControllers(mvcOptions => mvcOptions.EnableEndpointRouting = false)
+                .AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
             services.AddOData();
         }
@@ -121,12 +120,12 @@ namespace Contacts.WebService
             var odataBuilder = new ODataConventionModelBuilder();
             odataBuilder.EnableLowerCamelCase();
 
-            odataBuilder.EntityType<LinkDTO>()
+            odataBuilder.EntityType<ContactDTO>()
                 .HasKey(entity => entity.Id);
 
             odataBuilder.EntitySet<EmployeeDTO>(routeName).EntityType
                 .HasKey(entity => entity.Id)
-                .HasMany(entity => entity.Links);
+                .HasMany(entity => entity.Contacts);
 
             return odataBuilder.GetEdmModel();
         }

@@ -30,7 +30,7 @@ namespace Employee.Persistence
                 .HasColumnName(nameof(Domain.Employee.Position))
                 .IsRequired();
 
-            builder.HasMany(x => x.Links).WithOne()
+            builder.HasMany(x => x.Contacts).WithOne()
                 .OnDelete(DeleteBehavior.Cascade)
                 .Metadata.PrincipalToDependent
                 .SetPropertyAccessMode(PropertyAccessMode.Field);
