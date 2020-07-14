@@ -1,6 +1,6 @@
 import { Action, Reducer } from 'redux';
 import { KnownAction } from './EmployeeActions';
-import { EmployeeState, ContactState } from './EmployeeState';
+import { EmployeeState, ContactState, ContactType } from './EmployeeState';
 
 export const unloadedState: EmployeeState = {
     id: -1,
@@ -13,6 +13,22 @@ export const unloadedState: EmployeeState = {
     tmpContactId: -1,
     contacts: []
 };
+
+function isContactValid(value: string, type: ContactType): boolean {
+    switch (type) {
+        case ContactType.Email:
+            {
+                const regexp: RegExp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+                return regexp.test(value);
+            }
+        case ContactType.Skype:
+            {
+                return value.length > 3;
+            }
+        default:
+            return true;
+    }
+}
 
 export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined, incomingAction: Action): EmployeeState => {
     if (state === undefined) {
@@ -46,7 +62,9 @@ export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined
                 {
                     contacts: state.contacts.map(contact => {
                         if (contact.id === action.id) {
-                            return Object.assign({}, contact, { value: action.value });
+
+                            const isValid = isContactValid(action.value, contact.type);
+                            return Object.assign({}, contact, { value: action.value, isValid: isValid });
                         }
                         return contact;
                     })
@@ -56,7 +74,8 @@ export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined
                 {
                     contacts: state.contacts.map(contact => {
                         if (contact.id === action.id) {
-                            return Object.assign({}, contact, { type: action.contactType });
+                            const isValid = isContactValid(contact.value, action.contactType);
+                            return Object.assign({}, contact, { type: action.contactType, isValid: isValid });
                         }
                         return contact;
                     })

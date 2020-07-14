@@ -6,7 +6,7 @@ import { TextInput } from './TextInput';
 import { DateInput } from './DateInput';
 import { EmployeesProps } from './EmployeesProps';
 import { Contacts } from './Contacts';
-import { Button, Container, Row, Input, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Container } from 'reactstrap';
 
 export class Employee extends React.PureComponent<EmployeesProps> {
     render() {

@@ -1,7 +1,12 @@
+export enum ContactType {
+    Skype = "Skype",
+    Email = "Email",
+}
+
 export interface ContactState {
     id: number;
     value: string;
-    type: string;
+    type: ContactType;
 
     isValid: boolean;
 }

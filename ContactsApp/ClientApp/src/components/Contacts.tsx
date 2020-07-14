@@ -1,7 +1,7 @@
 ﻿import * as React from 'react';
 import { connect } from 'react-redux';
 import * as EmployeesStore from '../store/EmployeesContainer';
-import { ContactState, EmployeeState } from '../store/EmployeeState';
+import { ContactState, ContactType } from '../store/EmployeeState';
 import { Button, Container, Row, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 import { EmployeesProps } from './EmployeesProps';
 
@@ -14,11 +14,12 @@ export class Contacts extends React.PureComponent<EmployeesProps> {
                         <Row>
                             <InputGroup>
                                 <Input type="select" value={contact.type} onChange={
-                                    (event: React.ChangeEvent<HTMLInputElement>) => this.props.setContactType(contact.id, event.target.value)}>
-                                    <option>Skype</option>
-                                    <option>Email</option>
+                                    (event: React.ChangeEvent<HTMLInputElement>) => this.props.setContactType(contact.id, ContactType[event.target.value as keyof typeof ContactType])}>
+                                    {Object.keys(ContactType).map(key => {
+                                        return <option>{key}</option>
+                                    })}
                                 </Input>
-                                <Input type="text" value={contact.value} onChange={
+                                <Input valid={contact.isValid} invalid={!contact.isValid} type="text" value={contact.value} onChange={
                                     (event: React.ChangeEvent<HTMLInputElement>) => this.props.setContactValue(contact.id, event.target.value)} />
                                 <InputGroupAddon addonType="append">
                                     <Button color="danger"
@@ -32,7 +33,7 @@ export class Contacts extends React.PureComponent<EmployeesProps> {
                 </Container>
                 <br />
                 <Button color="success"
-                    onClick={() => { this.props.createContact("...", "Email"); }}>
+                    onClick={() => { this.props.createContact("...", ContactType.Email); }}>
                     Create new contact
                 </Button>
             </React.Fragment >

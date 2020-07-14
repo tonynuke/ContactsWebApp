@@ -1,5 +1,5 @@
 import { AppThunkAction } from './';
-import { ContactState, EmployeeState } from "./EmployeeState";
+import { ContactState, EmployeeState, ContactType } from "./EmployeeState";
 
 export interface SetEmployeeNameAction {
     type: 'SET_EMPLOYEE_NAME';
@@ -34,7 +34,7 @@ export interface SetEmployeePositionAction {
 export interface CreateContactAction {
     type: 'CREATE_CONTACT';
     newValue: string;
-    newType: string;
+    newType: ContactType;
 }
 
 export interface DeleteContactAction {
@@ -56,7 +56,7 @@ export interface SetContactValueAction {
 export interface SetContactTypeAction {
     type: 'SET_CONTACT_TYPE';
     id: number;
-    contactType: string;
+    contactType: ContactType;
 }
 
 export type KnownAction = SetEmployeeNameAction
@@ -72,7 +72,7 @@ export type KnownAction = SetEmployeeNameAction
     | SaveEmployeeAction;
 
 export const actionCreators = {
-    createContact: (newValue: string, newType: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    createContact: (newValue: string, newType: ContactType): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'CREATE_CONTACT', newValue: newValue, newType: newType });
     },
     deleteContact: (id: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
@@ -99,7 +99,7 @@ export const actionCreators = {
     setContactValue: (id: number, value: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'SET_CONTACT_VALUE', id: id, value: value });
     },
-    setContactType: (id: number, contactType: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    setContactType: (id: number, contactType: ContactType): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'SET_CONTACT_TYPE', id: id, contactType: contactType });
     },
 };
