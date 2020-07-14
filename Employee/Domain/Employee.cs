@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Employee.Domain.Contacts;
 
 namespace Employee.Domain
 {
     public class Employee
     {
-        public long Id { get; private set; }
+        public long Id { get; }
 
-        public Name Position { get; set; }
+        public String Position { get; set; }
 
-        public Name Name { get; set; }
+        public String Name { get; set; }
 
-        public Name Surname { get; set; }
+        public String Surname { get; set; }
 
-        public Name Patronymic { get; set; }
+        public String Patronymic { get; set; }
 
-        public Name Organization { get; set; }
+        public String Organization { get; set; }
 
         public DateTime BirthDate { get; set; }
 
@@ -24,30 +25,27 @@ namespace Employee.Domain
 
         public IReadOnlyCollection<Contact> Contacts => this.contacts;
 
-        public Contact AddContact(string value, ContactType type)
+        public void AddContacts(IEnumerable<Contact> contacts)
         {
-            var contact = new Contact { Value = value, Type = type };
+            this.contacts.AddRange(contacts);
+        }
+
+        public Contact AddContact(Contact contact)
+        {
             this.contacts.Add(contact);
             return contact;
         }
 
-        public void RemoveContact(long id)
+        public void ClearContacts()
         {
-            var contact = this.contacts.SingleOrDefault(e => e.Id == id);
-            if (contact != null)
-                this.RemoveContact(contact);
-        }
-
-        public void RemoveContact(Contact contact)
-        {
-            this.contacts.Remove(contact);
+            this.contacts.Clear();
         }
 
         private Employee()
         {
         }
 
-        public Employee(Name name, Name position)
+        public Employee(String name, String position)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.Position = position ?? throw new ArgumentNullException(nameof(position));

@@ -1,4 +1,5 @@
 ﻿using Employee.Domain;
+using Employee.Domain.Contacts;
 
 namespace Contacts.WebService.DTO.Contact
 {

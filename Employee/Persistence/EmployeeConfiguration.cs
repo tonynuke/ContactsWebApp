@@ -30,8 +30,14 @@ namespace Employee.Persistence
                 .HasColumnName(nameof(Domain.Employee.Position))
                 .IsRequired();
 
-            builder.HasMany(x => x.Contacts).WithOne()
-                .OnDelete(DeleteBehavior.Cascade)
+            builder.OwnsMany(employee => employee.Contacts,
+                navigationBuilder =>
+                {
+                    navigationBuilder.Property(contact => contact.Type).IsRequired();
+                    navigationBuilder.Property(contact => contact.Value).IsRequired();
+                });
+
+            builder.OwnsMany(employee => employee.Contacts).WithOwner()
                 .Metadata.PrincipalToDependent
                 .SetPropertyAccessMode(PropertyAccessMode.Field);
         }

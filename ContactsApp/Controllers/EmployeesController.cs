@@ -4,12 +4,15 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.AspNet.OData;
 using Contacts.WebService.DTO.Employee;
+using Employee.Domain;
+using Employee.Domain.Contacts;
 using Employee.Persistence;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using String = System.String;
 
 namespace Contacts.WebService.Controllers
 {
@@ -31,7 +34,7 @@ namespace Contacts.WebService.Controllers
         }
 
         [HttpPost]
-        public async Task<long> CreateEmployee([FromBody] CreateEmployeeDTO dto)
+        public async Task<IActionResult> CreateEmployee([FromBody] CreateEmployeeDTO dto)
         {
             var employee = new Employee.Domain.Employee(dto.Name, dto.Position)
             {
@@ -44,13 +47,22 @@ namespace Contacts.WebService.Controllers
 
             await this.dbContext.Employees.AddAsync(employee);
 
-            foreach (var contact in dto.Contacts)
+            var contacts = dto.Contacts.Select(contact => Contact.Create(contact.Type, contact.Value)).ToList();
+            var errors = contacts.Where(contact => contact.IsFailure).Select(contact => contact.Error).ToList();
+            if (errors.Any())
             {
-                employee.AddContact(contact.Value, contact.Type);
+                string errorMessage = string.Join(" ", errors);
+                throw new Exception(errorMessage);
+            }
+
+            foreach (var contact in contacts)
+            {
+                employee.AddContact(contact.Value);
             }
 
             await this.dbContext.SaveChangesAsync();
-            return employee.Id;
+            
+            return Ok();
         }
 
         [HttpPut]
@@ -70,24 +82,14 @@ namespace Contacts.WebService.Controllers
             employee.Organization = dto.Organization;
             employee.Position = dto.Position;
 
-            var contactsToCreate = dto.Contacts.Where(contact=> contact.Id < 0).ToList();
-            var contactsIdsToDelete = employee.Contacts.Select(contact => contact.Id)
-                .Except(dto.Contacts.Select(contact => contact.Id)).ToList();
-            var contactsIdsToChange = employee.Contacts.Select(contact => contact.Id)
-                .Intersect(dto.Contacts.Select(contact => contact.Id)).ToList();
+            employee.ClearContacts();
 
-            foreach (var contact in contactsToCreate)
-                employee.AddContact(contact.Value, contact.Type);
-
-            foreach (var contactId in contactsIdsToDelete)
-                employee.RemoveContact(contactId);
-
-            foreach (var contactId in contactsIdsToChange)
+            var contacts = dto.Contacts.Select(contact => Contact.Create(contact.Type, contact.Value)).ToList();
+            var errors = contacts.Where(contact => contact.IsFailure).Select(contact => contact.Error).ToList();
+            if (errors.Any())
             {
-                var dtoContact = dto.Contacts.Single(contact => contact.Id == contactId);
-                var contactToChange = employee.Contacts.Single(contact => contact.Id == contactId);
-                contactToChange.Value = dtoContact.Value;
-                contactToChange.Type = dtoContact.Type;
+                string errorMessage = string.Join(" ", errors);
+                throw new Exception(errorMessage);
             }
 
             await this.dbContext.SaveChangesAsync();

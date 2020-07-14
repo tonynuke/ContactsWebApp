@@ -5,7 +5,7 @@ import * as Employee from "./EmployeeActions";
 import { EmployeeState, ContactState } from "./EmployeeState";
 import * as EmployeeReducer from "./EmployeeReducer";
 
-interface OdataEmployeesState {
+interface OdataEmployeesResponse {
     value: EmployeeState[];
 }
 
@@ -61,7 +61,7 @@ export const actionCreators = {
                     const query = buildQuery({ expand });
                     if (appState && appState.employees) {
                         fetch(`odata/employees${query}`)
-                            .then(response => response.json() as Promise<OdataEmployeesState>)
+                            .then(response => response.json() as Promise<OdataEmployeesResponse>)
                             .then(data => {
                                 dispatch({ type: 'RECEIVE_EMPLOYEES', employees: data.value });
                             }).then(data => {
@@ -78,7 +78,7 @@ export const actionCreators = {
         const query = buildQuery({ expand });
         if (appState && appState.employees) {
             fetch(`odata/employees${query}`)
-                .then(response => response.json() as Promise<OdataEmployeesState>)
+                .then(response => response.json() as Promise<OdataEmployeesResponse>)
                 .then(data => {
                     dispatch({ type: 'RECEIVE_EMPLOYEES', employees: data.value });
                 });
@@ -123,16 +123,17 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
     switch (action.type) {
         case 'RECEIVE_EMPLOYEES':
             return {
-                employees: action.employees,
+                employees: action.employees.map(employee => Object.assign({}, employee, {
+                    contacts: employee.contacts.map(
+                        (contact, index) => Object.assign({}, contact, { id: index, isValid: true }))
+                })),
                 isModalOpen: false,
                 current: state.current
             };
         case 'OPEN_NEW_MODAL':
-            {
-                const newEmployee: EmployeeState =
-                {
-                    id: -1, name: '', surname: '', patronymic: '', organization: '', position: '', birthDate: new Date(), contacts: [], tmpContactId: -1
-                };
+        {
+            const newEmployee: EmployeeState =
+                Object.assign({}, {} as EmployeeState, { id: -1, contacts: [], tmpContactId: -1, birthDate: new Date() });
                 return Object.assign({}, state, { isModalOpen: true, current: newEmployee });
             }
         case 'OPEN_EDIT_MODAL':

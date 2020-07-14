@@ -1,33 +1,39 @@
 ﻿using System;
-using Shared;
+using CSharpFunctionalExtensions;
 
 namespace Employee.Domain
 {
-    public class Name : IEquatable<Name>
+    public class String : IEquatable<String>
     {
         public string Value { get; }
 
-        public static bool IsNotEmpty(string value)
+        public static Result<String> Create(string value)
         {
-            return !string.IsNullOrWhiteSpace(value);
+            return string.IsNullOrWhiteSpace(value) ? 
+                Result.Failure<String>("Value can't be empty") : 
+                Result.Ok(new String(value));
         }
 
-        public Name(string value)
+        private String(string value)
         {
-            Contract.Requires(IsNotEmpty(value), "value can't be empty");
             this.Value = value;
         }
 
-        private Name()
+        private String()
         {
         }
 
-        public static implicit operator Name(string value)
+        public static implicit operator string(String value)
         {
-            return new Name(value);
+            return value.Value;
         }
 
-        public bool Equals(Name other)
+        public static implicit operator String(string value)
+        {
+            return Create(value).Value;
+        }
+
+        public bool Equals(String other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -39,7 +45,7 @@ namespace Employee.Domain
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Name)obj);
+            return Equals((String)obj);
         }
 
         public override int GetHashCode()
