@@ -1,6 +1,8 @@
 export enum ContactType {
     Skype = "Skype",
     Email = "Email",
+    Phone = "Phone",
+    Other = "Other",
 }
 
 export interface ContactState {

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using Contacts.WebService.DTO;
 
-namespace Contacts.WebService.DTO
+namespace Contacts.WebService
 {
     public class MappingProfile : Profile
     {

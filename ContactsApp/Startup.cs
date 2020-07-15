@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using AutoMapper;
 using Contacts.WebService.DTO;
 using Employee.Persistence;
@@ -13,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Contacts.WebService

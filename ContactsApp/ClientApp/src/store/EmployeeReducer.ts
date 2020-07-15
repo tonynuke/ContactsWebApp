@@ -23,7 +23,7 @@ function isContactValid(value: string, type: ContactType): boolean {
             }
         case ContactType.Skype:
             {
-                return value.length > 3;
+                return value.length > 0;
             }
         default:
             return true;
@@ -51,8 +51,7 @@ export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined
             return Object.assign({}, state, { position: action.position });
         case 'CREATE_CONTACT':
             {
-                // используем отрицательные id для новых контактов
-                const nextId: number = state.tmpContactId > 0 || state.tmpContactId === undefined ? -1 : state.tmpContactId - 1;
+                const nextId: number = state.tmpContactId - 1;
                 const newContact: ContactState = { id: nextId, type: action.newType, value: action.newValue, isValid: false };
 
                 return Object.assign({}, state, { contacts: [...state.contacts, newContact], tmpContactId: nextId });

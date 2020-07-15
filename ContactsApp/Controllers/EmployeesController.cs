@@ -32,13 +32,13 @@ namespace Contacts.WebService.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateEmployee([FromBody] CreateEmployeeDTO dto)
         {
-            var employee = new Employee.Domain.Employee(dto.Name, dto.Position)
+            var employee = new Employee.Domain.Employee(dto.Name)
             {
                 Surname = dto.Surname,
                 Patronymic = dto.Patronymic,
                 BirthDate = dto.BirthDate,
                 Position = dto.Position,
-                Organization = dto.Organization
+                Organization = dto.Organization,
             };
 
             await this.dbContext.Employees.AddAsync(employee);

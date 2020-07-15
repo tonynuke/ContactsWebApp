@@ -15,6 +15,7 @@ namespace Employee.Domain
         public string Patronymic { get; set; }
 
         public string Organization { get; set; }
+
         public string Position { get; set; }
 
         public DateTime BirthDate { get; set; }
@@ -43,10 +44,9 @@ namespace Employee.Domain
         {
         }
 
-        public Employee(Name name, Name position)
+        public Employee(Name name)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
-            this.Position = position ?? throw new ArgumentNullException(nameof(position));
         }
     }
 }
