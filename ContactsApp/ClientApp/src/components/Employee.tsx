@@ -2,10 +2,8 @@
 import { connect } from 'react-redux';
 import * as EmployeesStore from '../store/EmployeesContainer';
 import { EmployeeState } from '../store/EmployeeState';
-import { TextInput } from './TextInput';
-import { DateInput } from './DateInput';
 import { Contacts } from './Contacts';
-import { Container, Alert } from 'reactstrap';
+import { Container, Alert, Col, Label, Input, Row } from 'reactstrap';
 
 export type EmployeeProps =
     EmployeesStore.EmployeesState
@@ -18,12 +16,48 @@ export const Employee: FunctionComponent<EmployeeProps> = (props) =>
             return <Alert color="danger">{error}</Alert>
         })}
         <Container>
-            <TextInput handleChange={props.setName} title="Name" value={props.current.name} />
-            <TextInput handleChange={props.setSurname} title="Surname" value={props.current.surname} />
-            <TextInput handleChange={props.setPatronymic} title="Patronymic" value={props.current.patronymic} />
-            <DateInput handleChange={props.setBirthDate} title="BirthDate" value={props.current.birthDate} />
-            <TextInput handleChange={props.setOrganization} title="Organization" value={props.current.organization} />
-            <TextInput handleChange={props.setPosition} title="Position" value={props.current.position} />
+            <Row>
+                <Col xs="3"><Label>Name</Label></Col>
+                <Col xs="9">
+                    <Input type="text" value={props.current.name}
+                        onChange={(event) => props.updateEmployee(Object.assign({}, props.current, { name: event.target.value }))} />
+                </Col>
+            </Row>
+            <Row>
+                <Col xs="3"><Label>Surname</Label></Col>
+                <Col xs="9">
+                    <Input type="text" value={props.current.surname}
+                        onChange={(event) => props.updateEmployee(Object.assign({}, props.current, { surname: event.target.value }))} />
+                </Col>
+            </Row>
+            <Row>
+                <Col xs="3"><Label>Patronymic</Label></Col>
+                <Col xs="9">
+                    <Input type="text" value={props.current.patronymic}
+                        onChange={(event) => props.updateEmployee(Object.assign({}, props.current, { patronymic: event.target.value }))} />
+                </Col>
+            </Row>
+            <Row>
+                <Col xs="3"><Label>Birth date</Label></Col>
+                <Col xs="9">
+                    <Input type="date" value={new Date(props.current.birthDate).toISOString().substr(0, 10)}
+                        onChange={(event) => props.updateEmployee(Object.assign({}, props.current, { birthDate: event.target.value }))} />
+                </Col>
+            </Row>
+            <Row>
+                <Col xs="3"><Label>Organization</Label></Col>
+                <Col xs="9">
+                    <Input type="text" value={props.current.organization}
+                        onChange={(event) => props.updateEmployee(Object.assign({}, props.current, { organization: event.target.value }))} />
+                </Col>
+            </Row>
+            <Row>
+                <Col xs="3"><Label>Position</Label></Col>
+                <Col xs="9">
+                    <Input type="text" value={props.current.position}
+                        onChange={(event) => props.updateEmployee(Object.assign({}, props.current, { position: event.target.value }))} />
+                </Col>
+            </Row>
         </Container>
         Contacts
         <br />

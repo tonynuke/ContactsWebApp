@@ -15,14 +15,14 @@ export const Contacts: FunctionComponent<ContactsProps> = (props) =>
             {props.current.contacts.map((contact: ContactState) =>
                 <Row>
                     <InputGroup>
-                        <Input type="select" value={contact.type} onChange={
-                            (event: React.ChangeEvent<HTMLInputElement>) => props.setContactType(contact.id, ContactType[event.target.value as keyof typeof ContactType])}>
+                        <Input type="select" value={contact.type}
+                            onChange={(event) => props.updateContact(Object.assign({}, contact, { type: event.target.value }))}>
                             {Object.keys(ContactType).map(key => {
                                 return <option>{key}</option>
                             })}
                         </Input>
-                        <Input valid={contact.isValid} invalid={!contact.isValid} type="text" value={contact.value} onChange={
-                            (event: React.ChangeEvent<HTMLInputElement>) => props.setContactValue(contact.id, event.target.value)} />
+                        <Input valid={contact.isValid} invalid={!contact.isValid} type="text" value={contact.value}
+                            onChange={(event) => props.updateContact(Object.assign({}, contact, { value: event.target.value }))} />
                         <InputGroupAddon addonType="append">
                             <Button color="danger"
                                 onClick={() => { props.deleteContact(contact.id); }}>
@@ -37,7 +37,7 @@ export const Contacts: FunctionComponent<ContactsProps> = (props) =>
         <Button color="success"
             onClick={() => { props.createContact("...", ContactType.Email); }}>
             Create new contact
-                </Button>
+        </Button>
     </React.Fragment>
 
 export default connect(

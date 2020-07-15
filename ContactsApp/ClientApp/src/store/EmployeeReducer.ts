@@ -15,20 +15,17 @@ export const unloadedState: EmployeeState = {
     contacts: []
 };
 
-function isContactValid(value: string, type: ContactType): boolean {
-    switch (type) {
-        case ContactType.Email:
-            {
-                const regexp: RegExp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-                return regexp.test(value);
-            }
-        case ContactType.Skype:
-            {
-                return value.length > 0;
-            }
-        default:
-            return true;
+function isContactValid(contact: ContactState): string {
+    if (contact.type === ContactType.Email) {
+        const regexp: RegExp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+        const isValidEmail: boolean = regexp.test(contact.value);
+        if (isValidEmail === false)
+            return `${contact.value} is not valid Email`;
     }
+    if (contact.value.length === 0)
+        return `value can't be empty`;
+
+    return "";
 }
 
 export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined, incomingAction: Action): EmployeeState => {
@@ -38,48 +35,47 @@ export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined
 
     const action = incomingAction as KnownAction;
     switch (action.type) {
-        case 'SET_EMPLOYEE_NAME':
-            return Object.assign({}, state, { name: action.name });
-        case 'SET_EMPLOYEE_SURNAME':
-            return Object.assign({}, state, { surname: action.surname });
-        case 'SET_EMPLOYEE_PATRONYMIC':
-            return Object.assign({}, state, { patronymic: action.patronymic });
-        case 'SET_EMPLOYEE_BIRTHDATE':
-            return Object.assign({}, state, { birthDate: action.birthDate });
-        case 'SET_EMPLOYEE_ORGANIZATION':
-            return Object.assign({}, state, { organization: action.organization });
-        case 'SET_EMPLOYEE_POSITION':
-            return Object.assign({}, state, { position: action.position });
+        case 'UPDATE_EMPLOYEE':
+            {
+                let errors: string[] = [];
+                if (action.employee.name.length === 0) {
+                    errors.push("Name can't be empty");
+                }
+                const contactsErrors: string[] = action.employee.contacts
+                    .map(contact => isContactValid(contact))
+                    .filter(validationResult => validationResult.length > 0);
+
+                return Object.assign({}, action.employee, { errors: errors.concat(contactsErrors) });
+            }
         case 'CREATE_CONTACT':
             {
                 const nextId: number = state.tmpContactId - 1;
                 const newContact: ContactState = { id: nextId, type: action.newType, value: action.newValue, isValid: false };
-
-                return Object.assign({}, state, { contacts: [...state.contacts, newContact], tmpContactId: nextId });
+                const validationResult = isContactValid(newContact);
+                const errors = validationResult.length === 0 ? [] : [validationResult];
+                return Object.assign({}, state, {
+                    contacts: [...state.contacts, newContact], tmpContactId: nextId,
+                    errors: errors
+                });
             }
-        case 'SET_CONTACT_VALUE':
-            return Object.assign({}, state,
-                {
-                    contacts: state.contacts.map(contact => {
-                        if (contact.id === action.id) {
+        case 'UPDATE_CONTACT':
+            {
+                const validationResult = isContactValid(action.contact);
+                const isValid = validationResult.length === 0;
+                const errors: string[] = isValid ? [] : [validationResult];
+                return Object.assign({},
+                    state,
+                    {
+                        contacts: state.contacts.map(contact => {
+                            if (contact.id === action.contact.id) {
 
-                            const isValid = isContactValid(action.value, contact.type);
-                            return Object.assign({}, contact, { value: action.value, isValid: isValid });
-                        }
-                        return contact;
-                    })
-                });
-        case 'SET_CONTACT_TYPE':
-            return Object.assign({}, state,
-                {
-                    contacts: state.contacts.map(contact => {
-                        if (contact.id === action.id) {
-                            const isValid = isContactValid(contact.value, action.contactType);
-                            return Object.assign({}, contact, { type: action.contactType, isValid: isValid });
-                        }
-                        return contact;
-                    })
-                });
+                                return Object.assign({}, action.contact, { isValid: isValid });
+                            }
+                            return contact;
+                        }),
+                        errors: errors
+                    });
+            }
         case 'DELETE_CONTACT':
             return Object.assign({}, state, { contacts: state.contacts.filter(contact => contact.id !== action.id) });
         default:

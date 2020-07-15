@@ -126,7 +126,7 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
                     tmpContactId: 0,
                     contacts: employee.contacts.map(
                         (contact, index) => Object.assign({}, contact, { id: index, isValid: true })),
-                    errors: [] 
+                    errors: []
                 })),
                 isModalOpen: false,
                 current: state.current,
@@ -134,7 +134,7 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
         case 'OPEN_NEW_MODAL':
             {
                 const newEmployee: EmployeeState =
-                    Object.assign({}, {} as EmployeeState, { id: -1, contacts: [], tmpContactId: -1, birthDate: new Date(), errors: [] });
+                    Object.assign({}, {} as EmployeeState, { id: -1, name: 'newEmployee', contacts: [], tmpContactId: -1, birthDate: new Date(), errors: [] });
                 return Object.assign({}, state, { isModalOpen: true, current: newEmployee });
             }
         case 'OPEN_EDIT_MODAL':
@@ -143,26 +143,15 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
             return Object.assign({}, state, { isModalOpen: false, errors: [] });
         case 'DELETE_EMPLOYEE':
             return Object.assign({}, state, { employees: state.employees.filter(employee => employee.id !== action.id) });
-        case 'SET_EMPLOYEE_NAME':
-            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
-        case 'SET_EMPLOYEE_SURNAME':
-            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
-        case 'SET_EMPLOYEE_PATRONYMIC':
-            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
-        case 'SET_EMPLOYEE_BIRTHDATE':
-            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
-        case 'SET_EMPLOYEE_ORGANIZATION':
-            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
-        case 'SET_EMPLOYEE_POSITION':
-            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
 
         case 'CREATE_CONTACT':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
-        case 'SET_CONTACT_VALUE':
-            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
-        case 'SET_CONTACT_TYPE':
+        case 'UPDATE_CONTACT':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
         case 'DELETE_CONTACT':
+            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
+
+        case 'UPDATE_EMPLOYEE':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
         case 'SAVE_EMPLOYEE':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
