@@ -13,7 +13,7 @@ export type EmployeesProps =
 class Employees extends React.PureComponent<EmployeesProps> {
     // This method is called when the component is first added to the document
     public componentDidMount() {
-        this.ensureDataFetched();
+        this.props.requestEmployees(undefined);
     }
 
     public render() {
@@ -51,10 +51,6 @@ class Employees extends React.PureComponent<EmployeesProps> {
                 </ModalFooter>
             </Modal>
         );
-    }
-
-    private ensureDataFetched() {
-        this.props.requestEmployees(undefined);
     }
 
     private renderEmployeesTable() {

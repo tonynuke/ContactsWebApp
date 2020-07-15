@@ -50,6 +50,8 @@ export const actionCreators = {
                 'Content-Type': 'application/json'
             }
         };
+        if (employee.errors.length > 0)
+            return;
         fetch('employees', request)
             .then(response => {
                 if (response.ok) {
@@ -140,7 +142,7 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
         case 'CLOSE_MODAL':
             return Object.assign({}, state, { isModalOpen: false, errors: [] });
         case 'DELETE_EMPLOYEE':
-            return Object.assign({}, state, { employees: state.employees.filter(employee => employee.id === action.id) });
+            return Object.assign({}, state, { employees: state.employees.filter(employee => employee.id !== action.id) });
         case 'SET_EMPLOYEE_NAME':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
         case 'SET_EMPLOYEE_SURNAME':
