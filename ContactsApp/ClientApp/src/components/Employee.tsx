@@ -5,7 +5,7 @@ import { EmployeeState } from '../store/EmployeeState';
 import { TextInput } from './TextInput';
 import { DateInput } from './DateInput';
 import { Contacts } from './Contacts';
-import { Container } from 'reactstrap';
+import { Container, Alert } from 'reactstrap';
 
 export type EmployeeProps =
     EmployeesStore.EmployeesState
@@ -14,6 +14,9 @@ export type EmployeeProps =
 
 export const Employee: FunctionComponent<EmployeeProps> = (props) =>
     <React.Fragment>
+        {props.current.errors.map(error => {
+            return <Alert color="danger">{error}</Alert>
+        })}
         <Container>
             <TextInput handleChange={props.setName} title="Name" value={props.current.name} />
             <TextInput handleChange={props.setSurname} title="Surname" value={props.current.surname} />
@@ -22,8 +25,8 @@ export const Employee: FunctionComponent<EmployeeProps> = (props) =>
             <TextInput handleChange={props.setOrganization} title="Organization" value={props.current.organization} />
             <TextInput handleChange={props.setPosition} title="Position" value={props.current.position} />
         </Container>
-                Contacts
-                <br />
+        Contacts
+        <br />
         <Contacts {...props} />
     </React.Fragment>
 

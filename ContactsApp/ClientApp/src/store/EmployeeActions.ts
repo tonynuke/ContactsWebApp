@@ -60,16 +60,16 @@ export interface SetContactTypeAction {
 }
 
 export type KnownAction = SetEmployeeNameAction
-    | SetEmployeeSurnameAction
-    | SetEmployeePatronymicAction
-    | SetEmployeeBirthDateAction
-    | SetEmployeeOrganizationAction
-    | SetEmployeePositionAction
-    | CreateContactAction
-    | DeleteContactAction
-    | SetContactValueAction
-    | SetContactTypeAction
-    | SaveEmployeeAction;
+                          | SetEmployeeSurnameAction
+                          | SetEmployeePatronymicAction
+                          | SetEmployeeBirthDateAction
+                          | SetEmployeeOrganizationAction
+                          | SetEmployeePositionAction
+                          | CreateContactAction
+                          | DeleteContactAction
+                          | SetContactValueAction
+                          | SetContactTypeAction
+                          | SaveEmployeeAction;
 
 export const actionCreators = {
     createContact: (newValue: string, newType: ContactType): AppThunkAction<KnownAction> => (dispatch, getState) => {

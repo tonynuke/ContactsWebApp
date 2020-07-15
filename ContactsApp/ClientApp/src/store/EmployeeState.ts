@@ -22,7 +22,8 @@ export interface EmployeeState {
     position: string;
     organization: string;
 
-    tmpContactId: number;
-
     contacts: ContactState[];
+
+    tmpContactId: number;
+    errors: string[];
 }

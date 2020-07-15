@@ -1,13 +1,8 @@
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from '.';
-import buildQuery from 'odata-query'
 import * as Employee from "./EmployeeActions";
 import { EmployeeState, ContactState } from "./EmployeeState";
 import * as EmployeeReducer from "./EmployeeReducer";
-
-interface OdataEmployeesResponse {
-    value: EmployeeState[];
-}
 
 export interface EmployeesState {
     employees: EmployeeState[];
@@ -59,14 +54,11 @@ export const actionCreators = {
             .then(response => {
                 if (response.ok) {
                     const appState = getState();
-                    const expand = 'Contacts';
-                    const query = buildQuery({ expand });
                     if (appState && appState.employees) {
-                        fetch(`odata/employees${query}`)
-                            .then(response => response.json() as Promise<OdataEmployeesResponse>)
+                        fetch(`odata/employees?$Expand=Contacts`)
+                            .then(response => response.json())
                             .then(data => {
                                 dispatch({ type: 'RECEIVE_EMPLOYEES', employees: data.value });
-                            }).then(data => {
                                 dispatch({ type: 'CLOSE_MODAL' });
                             });
                     }
@@ -76,13 +68,13 @@ export const actionCreators = {
     requestEmployees: (query: string | undefined): AppThunkAction<KnownAction> => (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
         const appState = getState();
-        let odataURL = `odata/employees?$Expand=Contacts`;
+        let odataUrl = `odata/employees?$Expand=Contacts`;
         if (query) {
-            odataURL = odataURL + `&$filter=startswith(Name, '${query}') eq true`;
+            odataUrl = odataUrl + `&$filter=startswith(Name, '${query}') eq true`;
         }
         if (appState && appState.employees) {
-            fetch(odataURL)
-                .then(response => response.json() as Promise<OdataEmployeesResponse>)
+            fetch(odataUrl)
+                .then(response => response.json())
                 .then(data => {
                     dispatch({ type: 'RECEIVE_EMPLOYEES', employees: data.value });
                 });
@@ -129,9 +121,10 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
         case 'RECEIVE_EMPLOYEES':
             return {
                 employees: action.employees.map(employee => Object.assign({}, employee, {
-                    tmpContactId: -1,
+                    tmpContactId: 0,
                     contacts: employee.contacts.map(
-                        (contact, index) => Object.assign({}, contact, { id: index, isValid: true }))
+                        (contact, index) => Object.assign({}, contact, { id: index, isValid: true })),
+                    errors: [] 
                 })),
                 isModalOpen: false,
                 current: state.current,
@@ -139,17 +132,15 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
         case 'OPEN_NEW_MODAL':
             {
                 const newEmployee: EmployeeState =
-                    Object.assign({}, {} as EmployeeState, { id: -1, contacts: [], tmpContactId: -1, birthDate: new Date() });
+                    Object.assign({}, {} as EmployeeState, { id: -1, contacts: [], tmpContactId: -1, birthDate: new Date(), errors: [] });
                 return Object.assign({}, state, { isModalOpen: true, current: newEmployee });
             }
         case 'OPEN_EDIT_MODAL':
             return Object.assign({}, state, { isModalOpen: true, current: action.employee });
         case 'CLOSE_MODAL':
-            return Object.assign({}, state, { isModalOpen: false });
+            return Object.assign({}, state, { isModalOpen: false, errors: [] });
         case 'DELETE_EMPLOYEE':
-            {
-                return Object.assign({}, state, { employees: state.employees.filter(employee => employee.id === action.id) });
-            }
+            return Object.assign({}, state, { employees: state.employees.filter(employee => employee.id === action.id) });
         case 'SET_EMPLOYEE_NAME':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
         case 'SET_EMPLOYEE_SURNAME':

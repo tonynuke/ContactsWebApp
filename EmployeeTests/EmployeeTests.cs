@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Employee.Domain;
 using Employee.Domain.Contacts;
 using Employee.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -33,11 +32,11 @@ namespace Employee.IntegrationTests
         }
 
         [Test]
-        public async Task AddEmployeeTest()
+        public async Task AddEmployee_SmokeTest()
         {
             var dto = dbContext.Employees.ToList();
 
-            var employee = new Domain.Employee("Ivan", "CEO");
+            var employee = new Domain.Employee("Ivan");
             var contact = Contact.Create(ContactType.Skype, "live:nickname");
             employee.AddContact(contact.Value);
 

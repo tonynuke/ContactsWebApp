@@ -11,6 +11,7 @@ export const unloadedState: EmployeeState = {
     organization: '',
     birthDate: new Date(),
     tmpContactId: -1,
+    errors: [],
     contacts: []
 };
 
