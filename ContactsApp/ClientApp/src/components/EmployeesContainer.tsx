@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { ApplicationState } from '../store';
 import * as EmployeesStore from '../store/EmployeesContainer';
 import { Employee } from "./Employee";
+import { Searcher } from "./Searcher";
 import { EmployeeState } from "../store/EmployeeState";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Table, Form, FormGroup, Label, Input } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Table } from 'reactstrap';
 
 export type EmployeesProps =
     EmployeesStore.EmployeesState
@@ -20,13 +21,7 @@ class Employees extends React.PureComponent<EmployeesProps> {
         return (
             <React.Fragment>
                 <h1>Employees</h1>
-                <Form inline>
-                    <FormGroup>
-                        <Label className="mr-sm-2">Search</Label>
-                        <Input type="text" placeholder="Search"
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => this.props.requestEmployees(event.target.value)} />
-                    </FormGroup>
-                </Form>
+                <Searcher {...this.props}/>
                 <br />
                 {this.renderEmployeesTable()}
                 {this.renderModalWindow()}

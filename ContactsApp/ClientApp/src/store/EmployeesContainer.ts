@@ -72,7 +72,12 @@ export const actionCreators = {
         const appState = getState();
         let odataUrl = `odata/employees?$Expand=Contacts`;
         if (query) {
-            odataUrl = odataUrl + `&$filter=startswith(Name, '${query}') eq true`;
+            odataUrl = odataUrl +
+                `&$filter=startswith(Name, '${query}') eq true ` +
+                `or startswith(Surname, '${query}') eq true ` +
+                `or startswith(Patronymic, '${query}') eq true ` +
+                `or startswith(Organization, '${query}') eq true ` +
+                `or startswith(Position, '${query}') eq true`;
         }
         if (appState && appState.employees) {
             fetch(odataUrl)
