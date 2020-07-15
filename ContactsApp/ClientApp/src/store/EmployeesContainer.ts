@@ -135,7 +135,6 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
                 })),
                 isModalOpen: false,
                 current: state.current,
-                searchString: ''
             };
         case 'OPEN_NEW_MODAL':
             {

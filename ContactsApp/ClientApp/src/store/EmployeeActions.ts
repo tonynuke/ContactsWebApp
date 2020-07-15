@@ -1,5 +1,5 @@
 import { AppThunkAction } from './';
-import { ContactState, EmployeeState, ContactType } from "./EmployeeState";
+import { EmployeeState, ContactType } from "./EmployeeState";
 
 export interface SetEmployeeNameAction {
     type: 'SET_EMPLOYEE_NAME';

@@ -1,5 +1,5 @@
 ﻿import React, { FunctionComponent } from 'react';
-import { InputGroup, Label, Input, Row, Col } from 'reactstrap';
+import { Label, Input, Row, Col } from 'reactstrap';
 
 export type DateInputProps = {
     handleChange: Function,

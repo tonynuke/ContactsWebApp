@@ -1,7 +1,7 @@
 ﻿import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import * as EmployeesStore from '../store/EmployeesContainer';
-import { ContactState, EmployeeState } from '../store/EmployeeState';
+import { EmployeeState } from '../store/EmployeeState';
 import { TextInput } from './TextInput';
 import { DateInput } from './DateInput';
 import { Contacts } from './Contacts';
