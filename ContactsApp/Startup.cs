@@ -39,7 +39,7 @@ namespace Contacts.WebService
                 configuration.RootPath = "ClientApp/build";
             });
 
-            var dbConnectionString = Configuration.GetConnectionString("OrganizationDatabase");
+            var dbConnectionString = Configuration.GetConnectionString("ContactsDatabase");
 
             services.AddDbContext<EmployeeDbContext>(options =>
             {
@@ -64,18 +64,18 @@ namespace Contacts.WebService
         {
             db.Database.EnsureCreated();
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
+            //    app.UseExceptionHandler("/Error");
+            //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            //    app.UseHsts();
+            //}
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
@@ -104,7 +104,7 @@ namespace Contacts.WebService
             {
                 spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment())
+                //if (env.IsDevelopment())
                 {
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
