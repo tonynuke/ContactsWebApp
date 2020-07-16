@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
 using CSharpFunctionalExtensions;
 
 namespace Employee.Domain.Contacts
@@ -16,16 +17,10 @@ namespace Employee.Domain.Contacts
 
         public static Result<Contact> Create(ContactType type, string value)
         {
-            if (type == ContactType.Email)
-            {
-                return EmailValidator.IsValid(value) ?
-                    Result.Ok(new Contact(type, value)) :
-                    Result.Failure<Contact>($"{value} is not valid Email");
-            }
-
-            return string.IsNullOrWhiteSpace(value) ?
-                Result.Failure<Contact>($"{type} contact can't be empty") :
-                Result.Ok(new Contact(type, value));
+            Result validationResult = ContactValidator.IsValid(type, value);
+            return validationResult.IsSuccess ?
+                Result.Ok(new Contact(type, value)) :
+                Result.Failure<Contact>(validationResult.Error);
         }
 
         public bool Equals(Contact other)
@@ -41,6 +36,16 @@ namespace Employee.Domain.Contacts
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
             return Equals((Contact)obj);
+        }
+
+        public static bool operator ==(Contact x, Contact y)
+        {
+            return x.Equals(y);
+        }
+
+        public static bool operator !=(Contact x, Contact y)
+        {
+            return !x.Equals(y);
         }
 
         public override int GetHashCode()

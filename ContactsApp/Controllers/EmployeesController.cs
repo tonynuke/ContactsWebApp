@@ -46,8 +46,7 @@ namespace Contacts.WebService.Controllers
             var contacts = this.GetContactsFromDTO(dto.Contacts);
             if (contacts.IsFailure)
             {
-                var errors = new { Errors = $"Can't update contacts due to errors: {contacts.Error}" };
-                return BadRequest(errors);
+                return BadRequest($"Can't update contacts due to errors: {contacts.Error}");
             }
 
             employee.AddContacts(contacts.Value);
@@ -71,8 +70,7 @@ namespace Contacts.WebService.Controllers
 
             if (employee == null)
             {
-                var errors = new { Errors = $"Employee with id {dto.Id} not found" };
-                return BadRequest(errors);
+                return BadRequest($"Employee with id {dto.Id} not found");
             }
 
             employee.Name = dto.Name;
@@ -85,8 +83,7 @@ namespace Contacts.WebService.Controllers
             var contacts = this.GetContactsFromDTO(dto.Contacts);
             if (contacts.IsFailure)
             {
-                var errors = new { Errors = $"Can't update contacts due to errors: {contacts.Error}" };
-                return BadRequest(errors);
+                return BadRequest($"Can't update contacts due to errors: {contacts.Error}");
             }
 
             employee.ClearContacts();
