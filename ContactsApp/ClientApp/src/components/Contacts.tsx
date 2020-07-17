@@ -1,6 +1,7 @@
 ﻿import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import * as EmployeesStore from '../store/EmployeesContainer';
+import { ApplicationState } from '../store';
 import { ContactState, ContactType } from '../store/EmployeeState';
 import { Button, Container, Row, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
@@ -9,7 +10,7 @@ export type ContactsProps =
     & typeof EmployeesStore.actionCreators
 
 
-export const Contacts: FunctionComponent<ContactsProps> = (props) =>
+const Contacts: FunctionComponent<ContactsProps> = (props) =>
     <React.Fragment>
         <Container >
             {props.current.contacts.map((contact, index) =>
@@ -40,6 +41,6 @@ export const Contacts: FunctionComponent<ContactsProps> = (props) =>
     </React.Fragment>;
 
 export default connect(
-    (state: ContactState) => state,
+    (state: ApplicationState) => state.employees,
     EmployeesStore.actionCreators
 )(Contacts as any);

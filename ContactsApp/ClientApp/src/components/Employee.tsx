@@ -2,7 +2,8 @@
 import { connect } from 'react-redux';
 import * as EmployeesStore from '../store/EmployeesContainer';
 import { EmployeeState, ContactType } from '../store/EmployeeState';
-import { Contacts } from './Contacts';
+import Contacts from './Contacts';
+import { ApplicationState } from '../store';
 import { Container, Alert, Col, Label, Input, Row, Button } from 'reactstrap';
 
 export type EmployeeProps =
@@ -10,7 +11,7 @@ export type EmployeeProps =
     & typeof EmployeesStore.actionCreators
 
 
-export const Employee: FunctionComponent<EmployeeProps> = (props) => {
+const Employee: FunctionComponent<EmployeeProps> = (props) => {
     const [nextContactId, setNextContactId] = useState(-1);
     const [errors, setErrors] = useState([]);
 
@@ -79,9 +80,9 @@ export const Employee: FunctionComponent<EmployeeProps> = (props) => {
                 </Col>
             </Row>
         </Container>
-                Contacts
+        Contacts
         <br />
-        <Contacts {...props} />
+        <Contacts />
         <br />
         <Button color="success"
             onClick={addNewContact}>
@@ -91,7 +92,8 @@ export const Employee: FunctionComponent<EmployeeProps> = (props) => {
     );
 }
 
+
 export default connect(
-    (state: EmployeeState) => state,
+    (state: ApplicationState) => state.employees,
     EmployeesStore.actionCreators
 )(Employee as any);

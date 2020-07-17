@@ -2,8 +2,8 @@
 import { connect } from 'react-redux';
 import { ApplicationState } from '../store';
 import * as EmployeesStore from '../store/EmployeesContainer';
-import { Employee } from "./Employee";
 import { Searcher } from "./Searcher";
+import Employee from "./Employee";
 import { EmployeeState } from "../store/EmployeeState";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Table } from 'reactstrap';
 
@@ -38,7 +38,7 @@ class Employees extends React.PureComponent<EmployeesProps> {
             <Modal isOpen={this.props.isModalOpen} toggle={this.props.closeModal}>
                 <ModalHeader toggle={this.props.closeModal}>Edit employee</ModalHeader>
                 <ModalBody>
-                    <Employee {...this.props} />
+                    <Employee />
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" onClick={() => this.props.saveEmployee(this.props.current)}>Save</Button>
