@@ -11,17 +11,13 @@ export interface EmployeesState {
     current: EmployeeState;
 }
 
-export interface OpenNewModalAction {
-    type: 'OPEN_NEW_MODAL';
-}
-
 export interface OpenEditModalAction {
     type: 'OPEN_EDIT_MODAL';
     employee: EmployeeState;
 }
 
-export interface CloseModalAction {
-    type: 'CLOSE_MODAL';
+export interface CloseEditModalAction {
+    type: 'CLOSE_EDIT_MODAL';
 }
 
 export interface DeleteEmployeeAction {
@@ -34,7 +30,7 @@ interface ReceiveEmployeesAction {
     employees: EmployeeState[];
 }
 
-export type KnownAction = ReceiveEmployeesAction | OpenNewModalAction | OpenEditModalAction | CloseModalAction | DeleteEmployeeAction
+export type KnownAction = ReceiveEmployeesAction | OpenEditModalAction | CloseEditModalAction | DeleteEmployeeAction
     | Employee.KnownAction;
 
 const newEmployeeId: number = -1;
@@ -61,7 +57,7 @@ export const actionCreators = {
                             .then(response => response.json())
                             .then(data => {
                                 dispatch({ type: 'RECEIVE_EMPLOYEES', employees: data.value });
-                                dispatch({ type: 'CLOSE_MODAL' });
+                                dispatch({ type: 'CLOSE_EDIT_MODAL' });
                             });
                     }
                 }
@@ -88,13 +84,13 @@ export const actionCreators = {
         }
     },
     openNewModal: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'OPEN_NEW_MODAL' });
+        dispatch({ type: 'OPEN_EDIT_MODAL', employee: EmployeeReducer.unloadedState });
     },
     openEditModal: (employee: EmployeeState): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'OPEN_EDIT_MODAL', employee: employee });
     },
     closeModal: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'CLOSE_MODAL' });
+        dispatch({ type: 'CLOSE_EDIT_MODAL' });
     },
     deleteEmployee: (id: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
         const request: RequestInit = {
@@ -136,15 +132,9 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
                 isModalOpen: false,
                 current: state.current,
             };
-        case 'OPEN_NEW_MODAL':
-            {
-                const newEmployee: EmployeeState =
-                    Object.assign({}, {} as EmployeeState, { id: -1, name: 'newEmployee', contacts: [], tmpContactId: -1, birthDate: new Date(), errors: [] });
-                return Object.assign({}, state, { isModalOpen: true, current: newEmployee });
-            }
         case 'OPEN_EDIT_MODAL':
             return Object.assign({}, state, { isModalOpen: true, current: action.employee });
-        case 'CLOSE_MODAL':
+        case 'CLOSE_EDIT_MODAL':
             return Object.assign({}, state, { isModalOpen: false, errors: [] });
         case 'DELETE_EMPLOYEE':
             return Object.assign({}, state, { employees: state.employees.filter(employee => employee.id !== action.id) });
