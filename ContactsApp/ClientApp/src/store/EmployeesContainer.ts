@@ -25,12 +25,17 @@ export interface DeleteEmployeeAction {
     id: number;
 }
 
+export interface AddNewEmployeeAction {
+    type: 'ADD_NEW_EMPLOYEE';
+    employee: EmployeeState;
+}
+
 interface ReceiveEmployeesAction {
     type: 'RECEIVE_EMPLOYEES';
     employees: EmployeeState[];
 }
 
-export type KnownAction = ReceiveEmployeesAction | OpenEditModalAction | CloseEditModalAction | DeleteEmployeeAction
+export type KnownAction = ReceiveEmployeesAction | OpenEditModalAction | CloseEditModalAction | DeleteEmployeeAction | AddNewEmployeeAction
     | Employee.KnownAction;
 
 const newEmployeeId: number = -1;
@@ -51,15 +56,8 @@ export const actionCreators = {
         fetch('employees', request)
             .then(response => {
                 if (response.ok) {
-                    const appState = getState();
-                    if (appState && appState.employees) {
-                        fetch(`odata/employees?$Expand=Contacts`)
-                            .then(response => response.json())
-                            .then(data => {
-                                dispatch({ type: 'RECEIVE_EMPLOYEES', employees: data.value });
-                                dispatch({ type: 'CLOSE_EDIT_MODAL' });
-                            });
-                    }
+                    dispatch({ type: 'ADD_NEW_EMPLOYEE', employee: employee });
+                    dispatch({ type: 'CLOSE_EDIT_MODAL' });
                 }
             });
     },
@@ -134,6 +132,8 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
             };
         case 'OPEN_EDIT_MODAL':
             return Object.assign({}, state, { isModalOpen: true, current: action.employee });
+        case 'ADD_NEW_EMPLOYEE':
+            return Object.assign({}, state, { employees: [...state.employees, action.employee] });
         case 'CLOSE_EDIT_MODAL':
             return Object.assign({}, state, { isModalOpen: false, errors: [] });
         case 'DELETE_EMPLOYEE':
