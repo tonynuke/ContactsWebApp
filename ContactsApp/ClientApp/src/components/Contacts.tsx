@@ -12,15 +12,15 @@ export type ContactsProps =
 export const Contacts: FunctionComponent<ContactsProps> = (props) =>
     <React.Fragment>
         <Container >
-            {props.current.contacts.map((contact: ContactState) =>
-                <Row>
+            {props.current.contacts.map((contact, index) =>
+                <Row key={index}>
                     <InputGroup>
                         <Input type="select" value={contact.type}
                             onChange={(event) => props.updateContact(Object.assign({},
                                 contact,
                                 { type: event.target.value }))}>
                             {Object.keys(ContactType).map(key => {
-                                return <option>{key}</option>
+                                return <option key={key}>{key}</option>;
                             })}
                         </Input>
                         <Input valid={contact.isValid} invalid={!contact.isValid} type="text" value={contact.value}

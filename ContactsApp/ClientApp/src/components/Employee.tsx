@@ -12,14 +12,16 @@ export type EmployeeProps =
 
 export const Employee: FunctionComponent<EmployeeProps> = (props) => {
     const [nextContactId, setNextContactId] = useState(-1);
+    const [errors, setErrors] = useState([]);
+
     const addNewContact = () => {
         props.createContact(nextContactId, "", ContactType.Other);
         setNextContactId(nextContactId - 1);
     };
 
     return (<React.Fragment>
-        {props.current.errors.map(error => {
-            return <Alert color="danger">{error}</Alert>
+        {props.current.errors.map((error, index) => {
+            return <Alert key={index} color="danger">{error}</Alert>;
         })}
         <Container>
             <Row>
