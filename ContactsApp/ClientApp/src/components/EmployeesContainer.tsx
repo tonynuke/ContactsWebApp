@@ -21,7 +21,7 @@ class Employees extends React.PureComponent<EmployeesProps> {
         return (
             <React.Fragment>
                 <h1>Employees</h1>
-                <Searcher {...this.props}/>
+                <Searcher search={(searchString: string) => this.props.requestEmployees(searchString)} />
                 <br />
                 {this.renderEmployeesTable()}
                 {this.renderModalWindow()}
