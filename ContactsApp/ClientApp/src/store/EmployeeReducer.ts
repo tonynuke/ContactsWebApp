@@ -10,7 +10,6 @@ export const unloadedState: EmployeeState = {
     position: '',
     organization: '',
     birthDate: new Date(),
-    tmpContactId: -1,
     errors: [],
     contacts: []
 };
@@ -49,12 +48,11 @@ export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined
             }
         case 'CREATE_CONTACT':
             {
-                const nextId: number = state.tmpContactId - 1;
-                const newContact: ContactState = { id: nextId, type: action.newType, value: action.newValue, isValid: false };
+                const newContact: ContactState = { id: action.newId, type: action.newType, value: action.newValue, isValid: false };
                 const validationResult = isContactValid(newContact);
                 const errors = validationResult.length === 0 ? [] : [validationResult];
                 return Object.assign({}, state, {
-                    contacts: [...state.contacts, newContact], tmpContactId: nextId,
+                    contacts: [...state.contacts, newContact],
                     errors: errors
                 });
             }

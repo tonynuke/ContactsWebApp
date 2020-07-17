@@ -24,6 +24,5 @@ export interface EmployeeState {
 
     contacts: ContactState[];
 
-    tmpContactId: number;
     errors: string[];
 }

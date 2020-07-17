@@ -13,6 +13,7 @@ export interface SaveEmployeeAction {
 
 export interface CreateContactAction {
     type: 'CREATE_CONTACT';
+    newId: number;
     newValue: string;
     newType: ContactType;
 }
@@ -35,8 +36,8 @@ export const actionCreators = {
     updateEmployee: (employee: EmployeeState): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'UPDATE_EMPLOYEE', employee: employee });
     },
-    createContact: (newValue: string, newType: ContactType): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'CREATE_CONTACT', newValue: newValue, newType: newType });
+    createContact: (newId: number, newValue: string, newType: ContactType): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        dispatch({ type: 'CREATE_CONTACT', newId: newId, newValue: newValue, newType: newType });
     },
     updateContact: (contact: ContactState): AppThunkAction<KnownAction> => (dispatch, getState) => {
         dispatch({ type: 'UPDATE_CONTACT', contact: contact });

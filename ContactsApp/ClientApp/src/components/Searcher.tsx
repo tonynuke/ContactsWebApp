@@ -10,7 +10,6 @@ export type Searcher =
 
 export const Searcher: FunctionComponent<Searcher> = (props) => {
     const [tooltipOpen, setTooltipOpen] = useState(false);
-
     const toggle = () => setTooltipOpen(!tooltipOpen);
 
     return (
