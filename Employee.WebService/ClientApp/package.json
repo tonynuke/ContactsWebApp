@@ -1,5 +1,5 @@
 {
-  "name": "contacts.webservice",
+  "name": "employee.webservice",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

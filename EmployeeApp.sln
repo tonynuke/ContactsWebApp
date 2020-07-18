@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Employee.UnitTests", "Emplo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Employee", "Employee\Employee.csproj", "{D515CBE7-9858-4EA8-A493-9B8BB951B889}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Employees.WebService", "Employee.WebService\Employees.WebService.csproj", "{7E9DE32E-6036-43B8-B948-AC9330F54AD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Employee.WebService", "Employee.WebService\Employee.WebService.csproj", "{7E9DE32E-6036-43B8-B948-AC9330F54AD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

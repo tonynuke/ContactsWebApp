@@ -1,6 +1,6 @@
 {
-  "short_name": "Contacts.WebService",
-  "name": "Contacts.WebService",
+  "short_name": "Employee.WebService",
+  "name": "Employee.WebService",
   "icons": [
     {
       "src": "favicon.ico",

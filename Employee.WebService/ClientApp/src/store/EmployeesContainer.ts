@@ -129,23 +129,32 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
     switch (action.type) {
         case 'RECEIVE_EMPLOYEES':
             return {
-                employees: action.employees.map(employee => Object.assign({}, employee, {
-                    contacts: employee.contacts.map((contact, index) => Object.assign({}, contact, { id: index, isValid: true })),
-                    errors: []
-                })),
+                employees: action.employees.map(employee => Object.assign({},
+                    employee,
+                    {
+                        contacts: employee.contacts.map(
+                            (contact, index) => Object.assign({}, contact, { id: index, isValid: true })),
+                        errors: []
+                    })),
                 isModalOpen: false,
                 current: state.current,
             };
         case 'OPEN_EDIT_MODAL':
             return Object.assign({}, state, { isModalOpen: true, current: action.employee });
         case 'ADD_EMPLOYEE':
-            return state.employees.filter(employee => employee.id === action.employee.id).length === 0 ?
-                Object.assign({}, state, { employees: [...state.employees, action.employee] }) :
-                Object.assign({}, state, {
-                    employees: state.employees.map(employee => {
-                        return employee.id === action.employee.id ? action.employee : employee;
-                    })
-                });
+            const employeeToAdd = Object.assign({}, action.employee, {
+                contacts: action.employee.contacts.map(
+                    (contact, index) => Object.assign({}, contact, { id: index, isValid: true })),
+            });
+            return state.employees.filter(employee => employee.id === employeeToAdd.id).length === 0
+                ? Object.assign({}, state, { employees: [...state.employees, employeeToAdd] })
+                : Object.assign({},
+                    state,
+                    {
+                        employees: state.employees.map(employee => {
+                            return employee.id === action.employee.id ? employeeToAdd : employee;
+                        })
+                    });
         case 'CLOSE_EDIT_MODAL':
             return Object.assign({}, state, { isModalOpen: false, errors: [] });
         case 'DELETE_EMPLOYEE':
