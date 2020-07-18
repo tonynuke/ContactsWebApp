@@ -7,12 +7,12 @@ using AutoMapper.AspNet.OData;
 using CSharpFunctionalExtensions;
 using Employee.Domain.Contacts;
 using Employee.Persistence;
-using Employees.WebService.DTO;
+using Employee.WebService.DTO;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Employees.WebService.Controllers
+namespace Employee.WebService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -25,8 +25,8 @@ namespace Employees.WebService.Controllers
         [HttpGet]
         public Task<IQueryable<EmployeeDTO>> Get(ODataQueryOptions<EmployeeDTO> options)
         {
-            var request = this.dbContext.Employees.AsNoTracking();
-            return request.GetQueryAsync(this.mapper, options);
+            var employees = this.dbContext.Employees.AsNoTracking();
+            return employees.GetQueryAsync(this.mapper, options);
         }
 
         [HttpPost]

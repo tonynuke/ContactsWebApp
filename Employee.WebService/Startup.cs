@@ -1,6 +1,6 @@
 using AutoMapper;
 using Employee.Persistence;
-using Employees.WebService.DTO;
+using Employee.WebService.DTO;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
 using Newtonsoft.Json.Converters;
 
-namespace Employees.WebService
+namespace Employee.WebService
 {
     public class Startup
     {
@@ -80,23 +80,20 @@ namespace Employees.WebService
 
             app.UseRouting();
 
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllerRoute(
-            //        name: "default",
-            //        pattern: "{controller}/{action=Index}/{id?}");
-            //});
-
-            app.UseMvc(routeBuilder =>
+            app.UseEndpoints(endpoints =>
             {
-                routeBuilder.Expand().Select().Filter();
+                endpoints.MapControllerRoute(
+                            name: "default",
+                            pattern: "{controller}/{action=Index}/{id?}");
+
+                endpoints.Expand().Select().Filter();
 
                 const string routePrefix = "odata";
                 const string controllerRouteName = "Employees";
-                routeBuilder.MapODataServiceRoute(
+                endpoints.MapODataRoute(
                     controllerRouteName,
                     routePrefix,
-                    GetOrganizationsEdmModel(controllerRouteName));
+                    GetEdmModel(controllerRouteName));
             });
 
             app.UseSpa(spa =>
@@ -110,7 +107,7 @@ namespace Employees.WebService
             });
         }
 
-        IEdmModel GetOrganizationsEdmModel(string routeName)
+        IEdmModel GetEdmModel(string routeName)
         {
             var odataBuilder = new ODataConventionModelBuilder();
             odataBuilder.EnableLowerCamelCase();

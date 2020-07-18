@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Employees.WebService.DTO;
+using Employee.WebService.DTO;
 
-namespace Employees.WebService
+namespace Employee.WebService
 {
     public class MappingProfile : Profile
     {

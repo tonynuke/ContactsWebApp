@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Employees.WebService.DTO
+namespace Employee.WebService.DTO
 {
     public class CreateEmployeeDTO
     {
