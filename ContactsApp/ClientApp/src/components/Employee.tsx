@@ -84,10 +84,7 @@ const Employee: FunctionComponent<EmployeeProps> = (props) => {
         <br />
         <Contacts />
         <br />
-        <Button color="success"
-            onClick={addNewContact}>
-            Create new contact
-                </Button>
+        <Button color="success" onClick={addNewContact}>Create new contact</Button>
     </React.Fragment>
     );
 }

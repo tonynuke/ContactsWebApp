@@ -7,7 +7,7 @@ namespace Employee.Domain.Contacts
     {
         private const string EmailPattern = @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$";
 
-        private const string PhonePattern = @"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}";
+        private const string PhonePattern = @"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$";
 
         private static readonly Regex EmailRegex = new Regex(EmailPattern);
 

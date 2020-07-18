@@ -4,7 +4,7 @@ import { EmployeeState, ContactState, ContactType } from './EmployeeState';
 
 export const unloadedState: EmployeeState = {
     id: -1,
-    name: '',
+    name: 'name',
     surname: '',
     patronymic: '',
     position: '',
@@ -14,17 +14,26 @@ export const unloadedState: EmployeeState = {
     contacts: []
 };
 
-function isContactValid(contact: ContactState): string {
-    if (contact.type === ContactType.Email) {
-        const regexp: RegExp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-        const isValidEmail: boolean = regexp.test(contact.value);
-        if (isValidEmail === false)
-            return `${contact.value} is not valid Email`;
-    }
-    if (contact.value.length === 0)
-        return `value can't be empty`;
+function validateContact(contact: ContactState): string {
+    const emailRegexp: RegExp = new RegExp(/^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/);
+    const phoneRegexp: RegExp = new RegExp(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/);
+    let error: string = '';
 
-    return "";
+    switch (contact.type) {
+        case ContactType.Email:
+            if (emailRegexp.test(contact.value) === false)
+                error = `${contact.value} is not valid Email. Valid example is my@mail.com`;
+            break;
+        case ContactType.Phone:
+            if (phoneRegexp.test(contact.value) === false)
+                error = `${contact.value} is not valid Phone. Valid example 88005553535`;
+            break;
+        default:
+            if (contact.value.length === 0)
+                error = `${contact.type} value can't be empty`;
+    }
+
+    return error;
 }
 
 export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined, incomingAction: Action): EmployeeState => {
@@ -37,11 +46,11 @@ export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined
         case 'UPDATE_EMPLOYEE':
             {
                 let errors: string[] = [];
-                if (action.employee.name.length === 0) {
+                if (!action.employee.name) {
                     errors.push("Name can't be empty");
                 }
                 const contactsErrors: string[] = action.employee.contacts
-                    .map(contact => isContactValid(contact))
+                    .map(contact => validateContact(contact))
                     .filter(validationResult => validationResult.length > 0);
 
                 return Object.assign({}, action.employee, { errors: errors.concat(contactsErrors) });
@@ -49,7 +58,7 @@ export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined
         case 'CREATE_CONTACT':
             {
                 const newContact: ContactState = { id: action.newId, type: action.newType, value: action.newValue, isValid: false };
-                const validationResult = isContactValid(newContact);
+                const validationResult = validateContact(newContact);
                 const errors = validationResult.length === 0 ? [] : [validationResult];
                 return Object.assign({}, state, {
                     contacts: [...state.contacts, newContact],
@@ -58,7 +67,7 @@ export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined
             }
         case 'UPDATE_CONTACT':
             {
-                const validationResult = isContactValid(action.contact);
+                const validationResult = validateContact(action.contact);
                 const isValid = validationResult.length === 0;
                 const errors: string[] = isValid ? [] : [validationResult];
                 return Object.assign({},

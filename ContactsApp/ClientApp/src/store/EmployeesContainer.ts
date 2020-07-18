@@ -1,7 +1,7 @@
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from '.';
 import * as Employee from "./EmployeeActions";
-import { EmployeeState, ContactState } from "./EmployeeState";
+import { EmployeeState } from "./EmployeeState";
 import * as EmployeeReducer from "./EmployeeReducer";
 
 export interface EmployeesState {
@@ -42,6 +42,8 @@ const newEmployeeId: number = -1;
 
 export const actionCreators = {
     saveEmployee: (employee: EmployeeState): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        if (employee.errors.length > 0)
+            return;
         const requestType: string = employee.id === newEmployeeId ? 'POST' : 'PUT';
         const request = {
             method: requestType,
@@ -51,8 +53,6 @@ export const actionCreators = {
                 'Content-Type': 'application/json'
             }
         };
-        if (employee.errors.length > 0)
-            return;
         fetch('employees', request)
             .then(response => {
                 if (response.ok) {
@@ -62,7 +62,6 @@ export const actionCreators = {
             });
     },
     requestEmployees: (query: string | undefined): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        // Only load data if it's something we don't already have (and are not already loading)
         const appState = getState();
         let odataUrl = `odata/employees?$Expand=Contacts`;
         if (query) {
@@ -122,9 +121,7 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
         case 'RECEIVE_EMPLOYEES':
             return {
                 employees: action.employees.map(employee => Object.assign({}, employee, {
-                    tmpContactId: 0,
-                    contacts: employee.contacts.map(
-                        (contact, index) => Object.assign({}, contact, { id: index, isValid: true })),
+                    contacts: employee.contacts.map((contact, index) => Object.assign({}, contact, { id: index, isValid: true })),
                     errors: []
                 })),
                 isModalOpen: false,
@@ -133,7 +130,13 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
         case 'OPEN_EDIT_MODAL':
             return Object.assign({}, state, { isModalOpen: true, current: action.employee });
         case 'ADD_NEW_EMPLOYEE':
-            return Object.assign({}, state, { employees: [...state.employees, action.employee] });
+            return action.employee.id === newEmployeeId ?
+                Object.assign({}, state, { employees: [...state.employees, action.employee] }) :
+                Object.assign({}, state, {
+                    employees: state.employees.map(employee => {
+                        return employee.id === action.employee.id ? action.employee : employee;
+                    })
+                });
         case 'CLOSE_EDIT_MODAL':
             return Object.assign({}, state, { isModalOpen: false, errors: [] });
         case 'DELETE_EMPLOYEE':
