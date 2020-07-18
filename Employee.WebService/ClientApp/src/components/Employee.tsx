@@ -54,7 +54,7 @@ const Employee: FunctionComponent<EmployeeProps> = (props) => {
             <Row>
                 <Col xs="3"><Label>Birth date</Label></Col>
                 <Col xs="9">
-                    <Input type="date" value={new Date(props.current.birthDate).toISOString().substr(0, 10)}
+                    <Input type="date" value={new Date(props.current.birthDate).toISOString().substring(0, 10)}
                         onChange={(event) => props.updateEmployee(Object.assign({},
                             props.current,
                             { birthDate: event.target.value }))} />

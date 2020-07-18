@@ -4,7 +4,7 @@ import { ApplicationState } from '../store';
 import * as EmployeesStore from '../store/EmployeesContainer';
 import { Searcher } from "./Searcher";
 import Employee from "./Employee";
-import { EmployeeState } from "../store/EmployeeState";
+import { EmployeeState, ContactState } from "../store/EmployeeState";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Table } from 'reactstrap';
 
 export type EmployeesProps =
@@ -52,23 +52,25 @@ class Employees extends React.PureComponent<EmployeesProps> {
             <Table>
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Surname</th>
-                        <th>Patronymic</th>
+                        <th>Full name</th>
                         <th>BirthDate</th>
-                        <th>Organization</th>
-                        <th>Position</th>
+                        <th>Job</th>
+                        <th>Contacts</th>
                     </tr>
                 </thead>
                 <tbody>
                     {this.props.employees.map((employee: EmployeeState) =>
                         <tr key={employee.id}>
-                            <td>{employee.name}</td>
-                            <td>{employee.surname}</td>
-                            <td>{employee.patronymic}</td>
+                            <td>{employee.name} {employee.surname} {employee.patronymic}</td>
                             <td>{new Date(employee.birthDate).toLocaleDateString()}</td>
-                            <td>{employee.organization}</td>
-                            <td>{employee.position}</td>
+                            <td>{employee.organization} {employee.position}</td>
+                            <td>{employee.contacts.map((contact: ContactState) =>
+                                <tr key={contact.id}>
+                                    <td>{contact.type}</td>
+                                    <td>{contact.value}</td>
+                                </tr>
+                            )}
+                            </td>
                             <td>
                                 <Button color="primary"
                                     onClick={() => { this.props.openEditModal(employee); }}>

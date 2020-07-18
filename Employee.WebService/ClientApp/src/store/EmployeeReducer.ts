@@ -45,15 +45,19 @@ export const reducer: Reducer<EmployeeState> = (state: EmployeeState | undefined
     switch (action.type) {
         case 'UPDATE_EMPLOYEE':
             {
+                let date: Date = state.birthDate;
                 let errors: string[] = [];
                 if (!action.employee.name) {
                     errors.push("Name can't be empty");
+                }
+                if (action.employee.birthDate.toString() !== "Invalid Date" && action.employee.birthDate.toString().length === 10) {
+                    date = action.employee.birthDate;
                 }
                 const contactsErrors: string[] = action.employee.contacts
                     .map(contact => validateContact(contact))
                     .filter(validationResult => validationResult.length > 0);
 
-                return Object.assign({}, action.employee, { errors: errors.concat(contactsErrors) });
+                return Object.assign({}, action.employee, { errors: errors.concat(contactsErrors), birthDate: date });
             }
         case 'CREATE_CONTACT':
             {
