@@ -53,7 +53,7 @@ namespace Contacts.WebService.Controllers
 
             await this.dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok(employee.Id);
         }
 
         private Result<IEnumerable<Contact>> GetContactsFromDTO(IEnumerable<ContactDTO> contacts)

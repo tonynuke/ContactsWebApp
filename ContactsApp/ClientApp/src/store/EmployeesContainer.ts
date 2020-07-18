@@ -25,8 +25,8 @@ export interface DeleteEmployeeAction {
     id: number;
 }
 
-export interface AddNewEmployeeAction {
-    type: 'ADD_NEW_EMPLOYEE';
+export interface AddEmployeeAction {
+    type: 'ADD_EMPLOYEE';
     employee: EmployeeState;
 }
 
@@ -35,7 +35,8 @@ interface ReceiveEmployeesAction {
     employees: EmployeeState[];
 }
 
-export type KnownAction = ReceiveEmployeesAction | OpenEditModalAction | CloseEditModalAction | DeleteEmployeeAction | AddNewEmployeeAction
+export type KnownAction = ReceiveEmployeesAction | OpenEditModalAction | CloseEditModalAction
+    | DeleteEmployeeAction | AddEmployeeAction
     | Employee.KnownAction;
 
 const newEmployeeId: number = -1;
@@ -44,7 +45,8 @@ export const actionCreators = {
     saveEmployee: (employee: EmployeeState): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if (employee.errors.length > 0)
             return;
-        const requestType: string = employee.id === newEmployeeId ? 'POST' : 'PUT';
+        const isCreate: boolean = employee.id === newEmployeeId;
+        const requestType: string = isCreate ? 'POST' : 'PUT';
         const request = {
             method: requestType,
             body: JSON.stringify(employee),
@@ -56,7 +58,14 @@ export const actionCreators = {
         fetch('employees', request)
             .then(response => {
                 if (response.ok) {
-                    dispatch({ type: 'ADD_NEW_EMPLOYEE', employee: employee });
+                    if (isCreate) {
+                        response.json().then(id => {
+                            dispatch({ type: 'ADD_EMPLOYEE', employee: Object.assign({}, employee, { id: id }) });
+                        });
+                    }
+                    else {
+                        dispatch({ type: 'ADD_EMPLOYEE', employee: employee });
+                    }
                     dispatch({ type: 'CLOSE_EDIT_MODAL' });
                 }
             });
@@ -129,8 +138,8 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
             };
         case 'OPEN_EDIT_MODAL':
             return Object.assign({}, state, { isModalOpen: true, current: action.employee });
-        case 'ADD_NEW_EMPLOYEE':
-            return action.employee.id === newEmployeeId ?
+        case 'ADD_EMPLOYEE':
+            return state.employees.filter(employee => employee.id === action.employee.id).length === 0 ?
                 Object.assign({}, state, { employees: [...state.employees, action.employee] }) :
                 Object.assign({}, state, {
                     employees: state.employees.map(employee => {
@@ -150,8 +159,6 @@ export const reducer: Reducer<EmployeesState> = (state: EmployeesState | undefin
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
 
         case 'UPDATE_EMPLOYEE':
-            return { ...state, current: EmployeeReducer.reducer(state.current, action) }
-        case 'SAVE_EMPLOYEE':
             return { ...state, current: EmployeeReducer.reducer(state.current, action) }
         default:
             return state;
