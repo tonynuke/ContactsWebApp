@@ -4,15 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.AspNet.OData;
-using Contacts.WebService.DTO;
 using CSharpFunctionalExtensions;
 using Employee.Domain.Contacts;
 using Employee.Persistence;
+using Employees.WebService.DTO;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Contacts.WebService.Controllers
+namespace Employees.WebService.Controllers
 {
     [ApiController]
     [Route("[controller]")]

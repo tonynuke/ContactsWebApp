@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Contacts.WebService.DTO
+namespace Employees.WebService.DTO
 {
     public class DeleteEmployeeDTO
     {

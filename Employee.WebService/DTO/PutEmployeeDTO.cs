@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Contacts.WebService.DTO
+namespace Employees.WebService.DTO
 {
-    public class CreateEmployeeDTO
+    public class PutEmployeeDTO
     {
         [Required]
+        public long Id { get; set; }
+
         [StringLength(100)]
         public string Name { get; set; }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Contacts.WebService.DTO
+namespace Employees.WebService.DTO
 {
     public class EmployeeDTO
     {

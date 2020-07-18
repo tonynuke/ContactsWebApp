@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Contacts.WebService
+namespace Employees.WebService
 {
     public class Program
     {

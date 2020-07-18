@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Employee.Domain.Contacts;
 
-namespace Contacts.WebService.DTO
+namespace Employees.WebService.DTO
 {
     public class ContactDTO
     {

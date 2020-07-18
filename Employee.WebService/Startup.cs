@@ -1,6 +1,6 @@
 using AutoMapper;
-using Contacts.WebService.DTO;
 using Employee.Persistence;
+using Employees.WebService.DTO;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -9,12 +9,11 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
 using Newtonsoft.Json.Converters;
 
-namespace Contacts.WebService
+namespace Employees.WebService
 {
     public class Startup
     {
