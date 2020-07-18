@@ -39,12 +39,12 @@ export type KnownAction = ReceiveEmployeesAction | OpenEditModalAction | CloseEd
     | DeleteEmployeeAction | AddEmployeeAction
     | Employee.KnownAction;
 
-const newEmployeeId: number = -1;
 
 export const actionCreators = {
     saveEmployee: (employee: EmployeeState): AppThunkAction<KnownAction> => (dispatch, getState) => {
         if (employee.errors.length > 0)
             return;
+        const newEmployeeId: number = -1;
         const isCreate: boolean = employee.id === newEmployeeId;
         const requestType: string = isCreate ? 'POST' : 'PUT';
         const request = {
