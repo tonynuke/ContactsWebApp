@@ -13,7 +13,6 @@ export type EmployeeProps =
 
 const Employee: FunctionComponent<EmployeeProps> = (props) => {
     const [nextContactId, setNextContactId] = useState(-1);
-    const [errors, setErrors] = useState([]);
 
     const addNewContact = () => {
         props.createContact(nextContactId, "", ContactType.Other);
@@ -88,7 +87,6 @@ const Employee: FunctionComponent<EmployeeProps> = (props) => {
     </React.Fragment>
     );
 }
-
 
 export default connect(
     (state: ApplicationState) => state.employees,

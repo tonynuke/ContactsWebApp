@@ -12,7 +12,6 @@ export type EmployeesProps =
     & typeof EmployeesStore.actionCreators
 
 class Employees extends React.PureComponent<EmployeesProps> {
-    // This method is called when the component is first added to the document
     public componentDidMount() {
         this.props.requestEmployees(undefined);
     }
@@ -91,6 +90,6 @@ class Employees extends React.PureComponent<EmployeesProps> {
 }
 
 export default connect(
-    (state: ApplicationState) => state.employees, // Selects which state properties are merged into the component's props
-    EmployeesStore.actionCreators, // Selects which action creators are merged into the component's props
+    (state: ApplicationState) => state.employees,
+    EmployeesStore.actionCreators,
 )(Employees as any);
