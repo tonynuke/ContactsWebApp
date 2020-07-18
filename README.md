@@ -1,12 +1,12 @@
 # ContactsWebApp
-Настройки описаны в appsettings.json
-* Для БД это ContactsDatabase, БД поднимается сама
+Settings - appsettings.json
+* DB connection - "ContactsDatabase", DB creation is automatically
 
-Требования:
+Requirements:
 * IIS Express
-* БД MS SQL
+* MS SQL DB engine 
 
-Как запускать:
+How to run:
 * npm install 
 * dotnet run
-* зайти на http://localhost:5000/
+* go to http://localhost:5000/
