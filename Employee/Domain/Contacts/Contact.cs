@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 using CSharpFunctionalExtensions;
 
 namespace Employee.Domain.Contacts
