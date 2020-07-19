@@ -4,6 +4,11 @@ import * as Employee from "./EmployeeActions";
 import { EmployeeState } from "./EmployeeState";
 import * as EmployeeReducer from "./EmployeeReducer";
 
+export enum FilterType {
+    Employee = "Employee",
+    Contact = "Contact",
+}
+
 export interface EmployeesState {
     employees: EmployeeState[];
     isModalOpen: boolean;
@@ -70,16 +75,21 @@ export const actionCreators = {
                 }
             });
     },
-    requestEmployees: (query: string | undefined): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    requestEmployees: (filter: string | undefined, type: FilterType): AppThunkAction<KnownAction> => (dispatch, getState) => {
         const appState = getState();
         let odataUrl = `odata/employees?$Expand=Contacts`;
-        if (query) {
-            odataUrl = odataUrl +
-                `&$filter=startswith(Name, '${query}') eq true ` +
-                `or startswith(Surname, '${query}') eq true ` +
-                `or startswith(Patronymic, '${query}') eq true ` +
-                `or startswith(Organization, '${query}') eq true ` +
-                `or startswith(Position, '${query}') eq true`;
+        if (filter) {
+            if (type === FilterType.Employee) {
+                odataUrl = odataUrl +
+                    `&$filter=startswith(Name, '${filter}') eq true ` +
+                    `or startswith(Surname, '${filter}') eq true ` +
+                    `or startswith(Patronymic, '${filter}') eq true ` +
+                    `or startswith(Organization, '${filter}') eq true ` +
+                    `or startswith(Position, '${filter}') eq true`;
+            }
+            else {
+                odataUrl = odataUrl + `&$filter=Contacts/any(c: c/Value eq '${filter}')`;
+            }
         }
         if (appState && appState.employees) {
             fetch(odataUrl)

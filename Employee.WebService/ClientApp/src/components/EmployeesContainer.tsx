@@ -13,14 +13,14 @@ export type EmployeesProps =
 
 class Employees extends React.PureComponent<EmployeesProps> {
     public componentDidMount() {
-        this.props.requestEmployees(undefined);
+        this.props.requestEmployees(undefined, EmployeesStore.FilterType.Employee);
     }
 
     public render() {
         return (
             <React.Fragment>
                 <h1>Employees</h1>
-                <Searcher search={(searchString: string) => this.props.requestEmployees(searchString)} />
+                <Searcher search={(filter: string, type: EmployeesStore.FilterType) => this.props.requestEmployees(filter, type)} />
                 <br />
                 {this.renderEmployeesTable()}
                 {this.renderModalWindow()}
