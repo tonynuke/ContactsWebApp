@@ -88,7 +88,7 @@ export const actionCreators = {
                     `or startswith(Position, '${filter}') eq true`;
             }
             else {
-                odataUrl = odataUrl + `&$filter=Contacts/any(c: c/Value eq '${filter}')`;
+                odataUrl = odataUrl + `&$filter=Contacts/any(c: startswith(c/Value, '${filter}') eq true)`;
             }
         }
         if (appState && appState.employees) {

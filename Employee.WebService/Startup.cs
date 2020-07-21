@@ -86,14 +86,9 @@ namespace Employee.WebService
                             name: "default",
                             pattern: "{controller}/{action=Index}/{id?}");
 
+                const string odata = "odata";
                 endpoints.Expand().Select().Filter();
-
-                const string routePrefix = "odata";
-                const string controllerRouteName = "Employees";
-                endpoints.MapODataRoute(
-                    controllerRouteName,
-                    routePrefix,
-                    GetEdmModel(controllerRouteName));
+                endpoints.MapODataRoute(odata, odata, GetEdmModel());
             });
 
             app.UseSpa(spa =>
@@ -107,7 +102,7 @@ namespace Employee.WebService
             });
         }
 
-        IEdmModel GetEdmModel(string routeName)
+        IEdmModel GetEdmModel()
         {
             var odataBuilder = new ODataConventionModelBuilder();
             odataBuilder.EnableLowerCamelCase();
@@ -115,7 +110,7 @@ namespace Employee.WebService
             odataBuilder.EntityType<ContactDTO>()
                 .HasKey(entity => entity.Value);
 
-            odataBuilder.EntitySet<EmployeeDTO>(routeName).EntityType
+            odataBuilder.EntitySet<EmployeeDTO>("Employees").EntityType
                 .HasKey(entity => entity.Id)
                 .HasMany(entity => entity.Contacts);
 
