@@ -124,7 +124,6 @@ export const actionCreators = {
                 }
             });
     },
-    ...Employee.actionCreators
 };
 
 const unloadedState: EmployeesState = { employees: [], isModalOpen: false, current: EmployeeReducer.unloadedState };

@@ -1,11 +1,9 @@
 import * as Employees from './EmployeesContainer';
-import * as Employee from './EmployeeState';
 import * as EmployeeReducer from './EmployeeReducer';
 
 // The top-level state object
 export interface ApplicationState {
     employees: Employees.EmployeesState | undefined;
-    employee: Employee.EmployeeState | undefined;
 }
 
 // Whenever an action is dispatched, Redux will update each top-level application state property using
@@ -13,7 +11,6 @@ export interface ApplicationState {
 // acts on the corresponding ApplicationState property type.
 export const reducers = {
     employees: Employees.reducer,
-    employee: EmployeeReducer.reducer,
 };
 
 // This type can be used as a hint on action creators so that its 'dispatch' and 'getState' params are

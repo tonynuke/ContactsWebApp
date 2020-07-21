@@ -34,8 +34,8 @@ export const Searcher: FunctionComponent<SearcherProps> = ({ search }) => {
                         <Tooltip placement="right" isOpen={tooltipOpen} target="Tooltip" toggle={toggle}>
                             Here are two search modes: 
                             <ul>
-                                <li>Employee - get employee by their attributes</li>
-                                <li>Contact - get employess by contact value</li>
+                                <li>Employee - get employees by attributes</li>
+                                <li>Contact - get employes by contact value</li>
                             </ul>
                     </Tooltip>
                     </InputGroup>

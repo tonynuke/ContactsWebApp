@@ -1,13 +1,14 @@
 ﻿import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import * as EmployeesStore from '../store/EmployeesContainer';
+import { actionCreators } from '../store/EmployeeActions';
 import { ApplicationState } from '../store';
-import { ContactState, ContactType } from '../store/EmployeeState';
+import { ContactType } from '../store/EmployeeState';
 import { Button, Container, Row, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
 export type ContactsProps =
     EmployeesStore.EmployeesState
-    & typeof EmployeesStore.actionCreators
+    & typeof actionCreators
 
 
 const Contacts: FunctionComponent<ContactsProps> = (props) =>
@@ -42,5 +43,5 @@ const Contacts: FunctionComponent<ContactsProps> = (props) =>
 
 export default connect(
     (state: ApplicationState) => state.employees,
-    EmployeesStore.actionCreators
+    actionCreators
 )(Contacts as any);
