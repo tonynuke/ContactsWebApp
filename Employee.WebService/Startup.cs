@@ -1,16 +1,18 @@
+using System.Linq;
 using AutoMapper;
 using Employee.Persistence;
-using Employee.WebService.DTO;
-using Microsoft.AspNet.OData.Builder;
+using Employee.WebService.Filters;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.OData.Edm;
+using Microsoft.Net.Http.Headers;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 
 namespace Employee.WebService
@@ -30,7 +32,10 @@ namespace Employee.WebService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            //services.AddControllersWithViews()
+            //    .AddNewtonsoftJson(options =>
+            //        options.SerializerSettings.Converters.Add(new StringEnumConverter()));
+            services.AddSwaggerGenNewtonsoftSupport();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -39,33 +44,40 @@ namespace Employee.WebService
             });
 
             var dbConnectionString = Configuration.GetConnectionString("ContactsDatabase");
+            services.AddDbContext<EmployeeDbContext>(
+                options => options.UseSqlServer(dbConnectionString).UseLoggerFactory(MyLoggerFactory),
+                ServiceLifetime.Scoped);
+            services.AddScoped<EmployeesService>();
 
-            services.AddDbContext<EmployeeDbContext>(options =>
-            {
-                options.UseSqlServer(dbConnectionString).UseLoggerFactory(MyLoggerFactory);
-            }, ServiceLifetime.Scoped);
-
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
-
+            var mappingConfig = new MapperConfiguration(config => config.AddProfile(new MappingProfile()));
             services.AddSingleton(mapper => mappingConfig.CreateMapper());
 
             services.AddControllers(mvcOptions => mvcOptions.EnableEndpointRouting = false)
                 .AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
             services.AddOData();
+            services.AddSwaggerGen(c =>
+            {
+                c.DocumentFilter<OpenApiDocumentCustomIgnoreFilter>();
+                c.OperationFilter<RemoveOdataOptionsFilter>();
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Contacts API", Version = "v1" });
+            });
+            SetOutputFormatters(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, EmployeeDbContext db)
         {
-            db.Database.EnsureCreated();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Contacts API V1");
+            });
 
             //if (env.IsDevelopment())
             //{
             //    app.UseDeveloperExceptionPage();
+                  db.Database.EnsureCreated();
             //}
             //else
             //{
@@ -86,9 +98,8 @@ namespace Employee.WebService
                             name: "default",
                             pattern: "{controller}/{action=Index}/{id?}");
 
-                const string odata = "odata";
+                endpoints.EnableDependencyInjection();
                 endpoints.Expand().Select().Filter();
-                endpoints.MapODataRoute(odata, odata, GetEdmModel());
             });
 
             app.UseSpa(spa =>
@@ -102,19 +113,20 @@ namespace Employee.WebService
             });
         }
 
-        IEdmModel GetEdmModel()
+        private static void SetOutputFormatters(IServiceCollection services)
         {
-            var odataBuilder = new ODataConventionModelBuilder();
-            odataBuilder.EnableLowerCamelCase();
+            services.AddMvcCore(options =>
+            {
+                foreach (var outputFormatter in options.OutputFormatters.OfType<OutputFormatter>().Where(x => x.SupportedMediaTypes.Count == 0))
+                {
+                    outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/odata"));
+                }
 
-            odataBuilder.EntityType<ContactDTO>()
-                .HasKey(entity => entity.Value);
-
-            odataBuilder.EntitySet<EmployeeDTO>("Employees").EntityType
-                .HasKey(entity => entity.Id)
-                .HasMany(entity => entity.Contacts);
-
-            return odataBuilder.GetEdmModel();
+                foreach (var inputFormatter in options.InputFormatters.OfType<InputFormatter>().Where(x => x.SupportedMediaTypes.Count == 0))
+                {
+                    inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/odata"));
+                }
+            });
         }
     }
 }
