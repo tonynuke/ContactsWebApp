@@ -29,7 +29,8 @@ namespace Employee.Persistence
                     navigationBuilder.Property(contact => contact.Value).IsRequired();
                 });
 
-            builder.OwnsMany(employee => employee.Contacts).WithOwner()
+            builder.OwnsMany(employee => employee.Contacts)
+                .WithOwner()
                 .Metadata.PrincipalToDependent
                 .SetPropertyAccessMode(PropertyAccessMode.Field);
         }
