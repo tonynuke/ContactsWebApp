@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.AspNet.OData;
@@ -10,14 +11,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Employee.WebService.Controllers
 {
+    [Produces("application/json")]
     [ApiController]
     [Route("[controller]")]
-    public class EmployeesController : ControllerBase
+    public class EmployeesController : EnvelopController
     {
         private readonly EmployeesService employeesService;
 
         private readonly IMapper mapper;
 
+        [ProducesResponseType(typeof(IQueryable<EmployeeDTO>), (int)HttpStatusCode.OK)]
         [HttpGet]
         public Task<IQueryable<EmployeeDTO>> Get(ODataQueryOptions<EmployeeDTO> options)
         {
@@ -25,30 +28,30 @@ namespace Employee.WebService.Controllers
             return employees.GetQueryAsync(this.mapper, options);
         }
 
+        [ProducesResponseType(typeof(Envelope<long>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Envelope), (int)HttpStatusCode.BadRequest)]
         [HttpPost]
         public async Task<IActionResult> CreateEmployee([FromBody] CreateEmployeeDTO dto)
         {
             var result = await this.employeesService.CreateEmployee(dto);
-            if (result.IsSuccess)
-                return Ok(result.Value);
-
-            return BadRequest(result.Error);
+            return result.IsSuccess ? Ok(result.Value) : Error(result.Error);
         }
 
+        [ProducesResponseType(typeof(Envelope), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Envelope), (int)HttpStatusCode.BadRequest)]
         [HttpPut]
         public async Task<IActionResult> UpdateEmployee([FromBody] PutEmployeeDTO dto)
         {
             var result = await this.employeesService.UpdateEmployee(dto);
-            if (result.IsSuccess)
-                return Ok();
-
-            return BadRequest(result.Error);
+            return result.IsSuccess ? Ok() : Error(result.Error);
         }
 
+        [ProducesResponseType(typeof(Envelope), (int)HttpStatusCode.OK)]
         [HttpDelete]
-        public Task DeleteEmployee([FromBody] DeleteEmployeeDTO dto)
+        public async Task<IActionResult> DeleteEmployee([FromBody] DeleteEmployeeDTO dto)
         {
-            return this.employeesService.DeleteEmployee(dto);
+            await this.employeesService.DeleteEmployee(dto);
+            return Ok();
         }
 
         public EmployeesController(EmployeesService employeesService, IMapper mapper)

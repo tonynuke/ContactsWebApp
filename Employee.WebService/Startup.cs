@@ -53,13 +53,14 @@ namespace Employee.WebService
             services.AddSingleton(mapper => mappingConfig.CreateMapper());
 
             services.AddControllers(mvcOptions => mvcOptions.EnableEndpointRouting = false)
-                .AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
+                .AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()))
+                .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = ModelStateValidator.ValidateModelState);
 
             services.AddOData();
             services.AddSwaggerGen(c =>
             {
                 c.DocumentFilter<OpenApiDocumentCustomIgnoreFilter>();
-                c.OperationFilter<RemoveOdataOptionsFilter>();
+                c.OperationFilter<OdataOptionsIgnoreFilter>();
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Contacts API", Version = "v1" });
             });
             SetOutputFormatters(services);

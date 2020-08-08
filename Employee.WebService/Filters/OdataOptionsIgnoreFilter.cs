@@ -5,7 +5,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Employee.WebService.Filters
 {
-    public class RemoveOdataOptionsFilter : IOperationFilter
+    public class OdataOptionsIgnoreFilter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {

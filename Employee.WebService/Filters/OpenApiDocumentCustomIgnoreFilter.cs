@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Employee.Domain.Contacts;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -18,14 +16,14 @@ namespace Employee.WebService.Filters
     {
         public void Apply(OpenApiDocument document, DocumentFilterContext context)
         {
-            ICollection<Type> dtoTypes = typeof(DTO.ContactDTO).Assembly.GetTypes().ToList();
-            dtoTypes.Add(typeof(ContactType));
+            var dtoTypes = typeof(Startup).Assembly.GetTypes()
+                .Select(type => type.Name).ToList();
+            dtoTypes.Add(nameof(ContactType));
 
-            var schemeKeys = context.SchemaRepository.Schemas
-                .Select(schema => schema.Key)
-                .Where(key => !dtoTypes.Any(type => type.FullName.Contains(key)));
+            var schemasKeys = context.SchemaRepository.Schemas.Select(schema => schema.Key);
+            var ignoreKeys = schemasKeys.Where(key => !dtoTypes.Any(key.EndsWith));
 
-            foreach (var key in schemeKeys)
+            foreach (var key in ignoreKeys)
             {
                 context.SchemaRepository.Schemas.Remove(key);
             }
