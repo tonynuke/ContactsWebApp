@@ -14,8 +14,13 @@ namespace Employee.WebService.Filters
                 .Any(parameter => parameter.ParameterType.BaseType == odataType);
 
             if (isOdataOperation)
-            {
                 operation.Parameters.Clear();
+            else
+            {
+                // remove OData RequestBody content
+                var ignoreContentKeys = operation.RequestBody.Content.Keys.Where(key => key.Contains("odata"));
+                foreach (var key in ignoreContentKeys)
+                    operation.RequestBody.Content.Remove(key);
             }
         }
     }

@@ -20,12 +20,13 @@ namespace Employee.WebService.Controllers
 
         private readonly IMapper mapper;
 
-        [ProducesResponseType(typeof(IQueryable<EmployeeDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Envelope<IQueryable<EmployeeDTO>>), (int)HttpStatusCode.OK)]
         [HttpGet]
-        public Task<IQueryable<EmployeeDTO>> Get(ODataQueryOptions<EmployeeDTO> options)
+        public async Task<IActionResult> Get(ODataQueryOptions<EmployeeDTO> options)
         {
             var employees = this.employeesService.GetAll().AsNoTracking();
-            return employees.GetQueryAsync(this.mapper, options);
+            var result = await employees.GetQueryAsync(this.mapper, options);
+            return Ok(result);
         }
 
         [ProducesResponseType(typeof(Envelope<long>), (int)HttpStatusCode.OK)]

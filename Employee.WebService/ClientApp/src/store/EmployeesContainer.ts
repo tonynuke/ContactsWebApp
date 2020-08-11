@@ -77,25 +77,25 @@ export const actionCreators = {
     },
     requestEmployees: (filter: string | undefined, type: FilterType): AppThunkAction<KnownAction> => (dispatch, getState) => {
         const appState = getState();
-        let odataUrl = `odata/employees?$Expand=Contacts`;
+        let odataUrl = `employees`;
         if (filter) {
             if (type === FilterType.Employee) {
                 odataUrl = odataUrl +
-                    `&$filter=startswith(Name, '${filter}') eq true ` +
+                    `?$filter=startswith(Name, '${filter}') eq true ` +
                     `or startswith(Surname, '${filter}') eq true ` +
                     `or startswith(Patronymic, '${filter}') eq true ` +
                     `or startswith(Organization, '${filter}') eq true ` +
                     `or startswith(Position, '${filter}') eq true`;
             }
             else {
-                odataUrl = odataUrl + `&$filter=Contacts/any(c: startswith(c/Value, '${filter}') eq true)`;
+                odataUrl = odataUrl + `?$filter=Contacts/any(c: startswith(c/Value, '${filter}') eq true)`;
             }
         }
         if (appState && appState.employees) {
             fetch(odataUrl)
                 .then(response => response.json())
                 .then(data => {
-                    dispatch({ type: 'RECEIVE_EMPLOYEES', employees: data.value });
+                    dispatch({ type: 'RECEIVE_EMPLOYEES', employees: data.result });
                 });
         }
     },

@@ -9,7 +9,7 @@ namespace Employee.Persistence
         {
             builder.HasKey(employee => employee.Id);
 
-            // Баг с неоптимальными запросами для OwnsOne https://github.com/dotnet/efcore/issues/18299. Говорят исправили в 5 версии.
+            // Unoptimized queries using OwnsOne https://github.com/dotnet/efcore/issues/18299. Fixed in framework version 5.
             builder.OwnsOne(person => person.Name)
                 .Property(name => name.Value)
                 .HasColumnName(nameof(Domain.Employee.Name))

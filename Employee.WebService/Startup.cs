@@ -3,9 +3,9 @@ using AutoMapper;
 using Employee.Persistence;
 using Employee.WebService.Filters;
 using Microsoft.AspNet.OData.Extensions;
+using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Employee.WebService
@@ -22,41 +23,35 @@ namespace Employee.WebService
         public static readonly ILoggerFactory MyLoggerFactory
             = LoggerFactory.Create(builder => { builder.AddDebug(); });
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        private void ConfigureDatabase(IServiceCollection services)
         {
-            //services.AddControllersWithViews()
-            //    .AddNewtonsoftJson(options =>
-            //        options.SerializerSettings.Converters.Add(new StringEnumConverter()));
-            services.AddSwaggerGenNewtonsoftSupport();
-
-            // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
-
             var dbConnectionString = Configuration.GetConnectionString("ContactsDatabase");
             services.AddDbContext<EmployeeDbContext>(
                 options => options.UseSqlServer(dbConnectionString).UseLoggerFactory(MyLoggerFactory),
                 ServiceLifetime.Scoped);
-            services.AddScoped<EmployeesService>();
+        }
 
-            var mappingConfig = new MapperConfiguration(config => config.AddProfile(new MappingProfile()));
-            services.AddSingleton(mapper => mappingConfig.CreateMapper());
+        private static void SetOutputFormatters(IServiceCollection services)
+        {
+            services.AddMvcCore(options =>
+            {
+                foreach (var outputFormatter in options.OutputFormatters.OfType<ODataOutputFormatter>())
+                {
+                    outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/odata"));
+                }
 
-            services.AddControllers(mvcOptions => mvcOptions.EnableEndpointRouting = false)
-                .AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()))
-                .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = ModelStateValidator.ValidateModelState);
+                foreach (var inputFormatter in options.InputFormatters.OfType<ODataInputFormatter>())
+                {
+                    inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/odata"));
+                }
+            });
+        }
 
-            services.AddOData();
+        private void ConfigureSwagger(IServiceCollection services)
+        {
+            services.AddSwaggerGenNewtonsoftSupport();
             services.AddSwaggerGen(c =>
             {
                 c.DocumentFilter<OpenApiDocumentCustomIgnoreFilter>();
@@ -64,6 +59,40 @@ namespace Employee.WebService
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Contacts API", Version = "v1" });
             });
             SetOutputFormatters(services);
+        }
+
+        private void ConfigureControllers(IServiceCollection services)
+        {
+            services.AddScoped<EmployeesService>();
+
+            var mappingConfig = new MapperConfiguration(config => config.AddProfile(new MappingProfile()));
+            services.AddSingleton(mapper => mappingConfig.CreateMapper());
+
+            services.AddControllers(mvcOptions => mvcOptions.EnableEndpointRouting = false)
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                })
+                .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = ModelStateValidator.ValidateModelState);
+        }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            // In production, the React files will be served from this directory
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/build";
+            });
+
+            this.ConfigureDatabase(services);
+            this.ConfigureControllers(services);
+
+            services.AddOData();
+
+            this.ConfigureSwagger(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -114,20 +143,9 @@ namespace Employee.WebService
             });
         }
 
-        private static void SetOutputFormatters(IServiceCollection services)
+        public Startup(IConfiguration configuration)
         {
-            services.AddMvcCore(options =>
-            {
-                foreach (var outputFormatter in options.OutputFormatters.OfType<OutputFormatter>().Where(x => x.SupportedMediaTypes.Count == 0))
-                {
-                    outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/odata"));
-                }
-
-                foreach (var inputFormatter in options.InputFormatters.OfType<InputFormatter>().Where(x => x.SupportedMediaTypes.Count == 0))
-                {
-                    inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/odata"));
-                }
-            });
+            Configuration = configuration;
         }
     }
 }

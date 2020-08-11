@@ -19,15 +19,15 @@ namespace Employee.Domain.Contacts
             {
                 case ContactType.Email:
                     return EmailRegex.Match(value).Success ?
-                        Result.Ok() :
+                        Result.Success() :
                         Result.Failure($"{value} is not valid Email");
                 case ContactType.Phone:
                     return PhoneRegex.Match(value).Success ?
-                        Result.Ok() :
+                        Result.Success() :
                         Result.Failure($"{value} is not valid phone");
                 default:
                     return !string.IsNullOrWhiteSpace(value) ?
-                        Result.Ok() :
+                        Result.Success() :
                         Result.Failure($"{value} can't be empty");
             }
         }

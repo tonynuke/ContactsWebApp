@@ -18,7 +18,7 @@ namespace Employee.Domain.Contacts
         {
             Result validationResult = ContactValidator.IsValid(type, value);
             return validationResult.IsSuccess ?
-                Result.Ok(new Contact(type, value)) :
+                Result.Success(new Contact(type, value)) :
                 Result.Failure<Contact>(validationResult.Error);
         }
 

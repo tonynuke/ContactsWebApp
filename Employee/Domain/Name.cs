@@ -11,7 +11,7 @@ namespace Employee.Domain
         {
             return string.IsNullOrWhiteSpace(name) ? 
                 Result.Failure<Name>("Name can't be empty") : 
-                Result.Ok(new Name(name));
+                Result.Success(new Name(name));
         }
 
         private Name(string value)
