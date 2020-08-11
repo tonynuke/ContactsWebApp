@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace Employee.UnitTests
 {
-    public class Tests
+    public class NameTests
     {
         [Test]
         public void CreateName_ImplicitCastFromEmptyString_ThrowsException()
