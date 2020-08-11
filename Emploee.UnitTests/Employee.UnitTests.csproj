@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Employee.WebService\Employee.WebService.csproj" />
     <ProjectReference Include="..\Employee\Employee.csproj" />
   </ItemGroup>
 

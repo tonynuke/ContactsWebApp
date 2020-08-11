@@ -15,6 +15,9 @@ namespace Employee.Domain.Contacts
 
         public static Result IsValid(ContactType type, string value)
         {
+            if (string.IsNullOrWhiteSpace(value))
+                return Result.Failure($"{value} can't be empty");
+
             switch (type)
             {
                 case ContactType.Email:
@@ -26,9 +29,7 @@ namespace Employee.Domain.Contacts
                         Result.Success() :
                         Result.Failure($"{value} is not valid phone");
                 default:
-                    return !string.IsNullOrWhiteSpace(value) ?
-                        Result.Success() :
-                        Result.Failure($"{value} can't be empty");
+                    return Result.Success();
             }
         }
     }
