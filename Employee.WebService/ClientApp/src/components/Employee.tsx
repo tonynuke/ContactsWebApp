@@ -4,7 +4,7 @@ import * as EmployeesStore from '../store/EmployeesContainer';
 import { ContactType } from '../store/EmployeeState';
 import { actionCreators } from '../store/EmployeeActions';
 import Contacts from './Contacts';
-import { ApplicationState } from '../store';
+import { ApplicationState } from '../store/index';
 import { Container, Alert, Col, Label, Input, Row, Button } from 'reactstrap';
 
 export type EmployeeProps =

@@ -55,15 +55,15 @@ namespace Employee.WebService
             return Result.Success(employee.Id);
         }
 
-        public async Task<Result> UpdateEmployee(PutEmployeeDTO dto)
+        public async Task<Result> UpdateEmployee(long id, PutEmployeeDTO dto)
         {
             var employee = await this.dbContext.Employees
-                .Where(e => e.Id == dto.Id)
+                .Where(e => e.Id == id)
                 .Include(e => e.Contacts).SingleOrDefaultAsync();
 
             if (employee == null)
             {
-                return Result.Failure($"Employee with id {dto.Id} not found");
+                return Result.Failure($"Employee with id {id} not found");
             }
 
             employee.Name = dto.Name;
@@ -86,9 +86,9 @@ namespace Employee.WebService
             return Result.Success();
         }
 
-        public async Task DeleteEmployee(DeleteEmployeeDTO dto)
+        public async Task DeleteEmployee(long id)
         {
-            var employee = await this.dbContext.Employees.SingleOrDefaultAsync(org => org.Id == dto.Id);
+            var employee = await this.dbContext.Employees.SingleOrDefaultAsync(org => org.Id == id);
             if (employee != null)
             {
                 this.dbContext.Employees.Remove(employee);

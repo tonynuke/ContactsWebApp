@@ -18,9 +18,8 @@ const Contacts: FunctionComponent<ContactsProps> = (props) =>
                 <Row key={contact.id}>
                     <InputGroup>
                         <Input type="select" value={contact.type}
-                            onChange={(event) => props.updateContact(Object.assign({},
-                                contact,
-                                { type: event.target.value }))}>
+                            onChange={(event) => props.updateContact(
+                                Object.assign({}, contact, { type: event.target.value }))}>
                             {Object.keys(ContactType).map(key => {
                                 return <option key={key}>{key}</option>;
                             })}

@@ -3,6 +3,7 @@ import { AppThunkAction } from '.';
 import * as Employee from "./EmployeeActions";
 import { EmployeeState } from "./EmployeeState";
 import * as EmployeeReducer from "./EmployeeReducer";
+import * as Client from "../services/OpenAPI";
 
 export enum FilterType {
     Employee = "Employee",
@@ -46,34 +47,36 @@ export type KnownAction = ReceiveEmployeesAction | OpenEditModalAction | CloseEd
 
 
 export const actionCreators = {
-    saveEmployee: (employee: EmployeeState): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        if (employee.errors.length > 0)
-            return;
-        const newEmployeeId: number = -1;
-        const isCreate: boolean = employee.id === newEmployeeId;
-        const requestType: string = isCreate ? 'POST' : 'PUT';
-        const request = {
-            method: requestType,
-            body: JSON.stringify(employee),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+    saveEmployee: (employee: EmployeeState): AppThunkAction<KnownAction> => async (dispatch, getState) => {
+        //if (employee.errors.length > 0)
+        //    return;
+        const newEmployeeId = -1;
+        const isNewEmployee = employee.id === newEmployeeId;
+        const client: Client.Client = new Client.Client();
+        let isSuccess: boolean = false;
+        if (isNewEmployee) {
+            try {
+                let newId = await client.createEmployee(new Client.EmployeeDTO({ name: employee.name }));
+                dispatch({ type: "ADD_EMPLOYEE", employee: Object.assign({}, employee, { id: newId }) });
+                isSuccess = true;
+            } catch (e) {
+                const exception = await e;
+                console.log(exception);
             }
-        };
-        fetch('employees', request)
-            .then(response => {
-                if (response.ok) {
-                    if (isCreate) {
-                        response.json().then(id => {
-                            dispatch({ type: 'ADD_EMPLOYEE', employee: Object.assign({}, employee, { id: id }) });
-                        });
-                    }
-                    else {
-                        dispatch({ type: 'ADD_EMPLOYEE', employee: employee });
-                    }
-                    dispatch({ type: 'CLOSE_EDIT_MODAL' });
-                }
-            });
+        } else {
+            try {
+            let response = await client.updateEmployee(employee.id, new Client.CreateEmployeeDTO({ name: employee.name }));
+            dispatch({ type: "ADD_EMPLOYEE", employee: employee });
+                isSuccess = true;
+            } catch (e) {
+                const exception = await e;
+                console.log(exception);
+            }
+        }
+
+        if (isSuccess) {
+            dispatch({ type: "CLOSE_EDIT_MODAL" });
+        }
     },
     requestEmployees: (filter: string | undefined, type: FilterType): AppThunkAction<KnownAction> => (dispatch, getState) => {
         const appState = getState();
@@ -100,29 +103,22 @@ export const actionCreators = {
         }
     },
     openNewModal: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'OPEN_EDIT_MODAL', employee: EmployeeReducer.unloadedState });
+        dispatch({ type: "OPEN_EDIT_MODAL", employee: EmployeeReducer.unloadedState });
     },
     openEditModal: (employee: EmployeeState): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'OPEN_EDIT_MODAL', employee: employee });
+        dispatch({ type: "OPEN_EDIT_MODAL", employee: employee });
     },
     closeModal: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        dispatch({ type: 'CLOSE_EDIT_MODAL' });
+        dispatch({ type: "CLOSE_EDIT_MODAL" });
     },
-    deleteEmployee: (id: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        const request: RequestInit = {
-            method: 'DELETE',
-            body: JSON.stringify({ id: id }),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        };
-        fetch('employees', request)
-            .then(response => {
-                if (response.ok) {
-                    dispatch({ type: 'DELETE_EMPLOYEE', id: id });
-                }
-            });
+    deleteEmployee: (id: number): AppThunkAction<KnownAction> => async (dispatch, getState) =>  {
+        const client: Client.Client = new Client.Client();
+        try {
+            const response = await client.deleteEmployee(id);
+            dispatch({ type: "DELETE_EMPLOYEE", id: id });
+        } catch (e) {
+            const error = e.Envelope.errorMessage;
+        }
     },
 };
 

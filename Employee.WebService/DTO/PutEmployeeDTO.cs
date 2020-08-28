@@ -6,9 +6,6 @@ namespace Employee.WebService.DTO
 {
     public class PutEmployeeDTO
     {
-        [Required]
-        public long Id { get; set; }
-
         [StringLength(100)]
         public string Name { get; set; }
 

@@ -107,7 +107,7 @@ namespace Employee.WebService
             //if (env.IsDevelopment())
             //{
             //    app.UseDeveloperExceptionPage();
-                  db.Database.EnsureCreated();
+            db.Database.EnsureCreated();
             //}
             //else
             //{
@@ -125,8 +125,8 @@ namespace Employee.WebService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                            name: "default",
-                            pattern: "{controller}/{action=Index}/{id?}");
+                    name: "default",
+                    pattern: "{controller}/{action=Index}/{id?}");
 
                 endpoints.EnableDependencyInjection();
                 endpoints.Expand().Select().Filter();

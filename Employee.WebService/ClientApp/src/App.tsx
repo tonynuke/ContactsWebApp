@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Route } from 'react-router';
 import Layout from './components/Layout';
-import Employees from './components/EmployeesContainer';
+import Employees from './containers/EmployeesContainer';
 
 import './custom.css'
 

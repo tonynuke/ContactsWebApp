@@ -41,17 +41,19 @@ namespace Employee.WebService.Controllers
         [ProducesResponseType(typeof(Envelope), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Envelope), (int)HttpStatusCode.BadRequest)]
         [HttpPut]
-        public async Task<IActionResult> UpdateEmployee([FromBody] PutEmployeeDTO dto)
+        [Route("{id}")]
+        public async Task<IActionResult> UpdateEmployee(long id, [FromBody] PutEmployeeDTO dto)
         {
-            var result = await this.employeesService.UpdateEmployee(dto);
+            var result = await this.employeesService.UpdateEmployee(id, dto);
             return result.IsSuccess ? Ok() : Error(result.Error);
         }
 
         [ProducesResponseType(typeof(Envelope), (int)HttpStatusCode.OK)]
         [HttpDelete]
-        public async Task<IActionResult> DeleteEmployee([FromBody] DeleteEmployeeDTO dto)
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteEmployee(long id)
         {
-            await this.employeesService.DeleteEmployee(dto);
+            await this.employeesService.DeleteEmployee(id);
             return Ok();
         }
 

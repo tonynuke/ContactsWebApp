@@ -1,9 +1,9 @@
 ﻿import * as React from 'react';
 import { connect } from 'react-redux';
-import { ApplicationState } from '../store';
+import { ApplicationState } from '../store/index';
 import * as EmployeesStore from '../store/EmployeesContainer';
-import { Searcher } from "./Searcher";
-import Employee from "./Employee";
+import { Searcher } from "../components/Searcher";
+import Employee from "../components/Employee";
 import { EmployeeState, ContactState } from "../store/EmployeeState";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Table } from 'reactstrap';
 
@@ -24,8 +24,7 @@ class Employees extends React.PureComponent<EmployeesProps> {
                 <br />
                 {this.renderEmployeesTable()}
                 {this.renderModalWindow()}
-                <Button color="success"
-                    onClick={() => { this.props.openNewModal(); }}>
+                <Button color="success" onClick={() => { this.props.openNewModal(); }}>
                     Create new employee
                 </Button>
             </React.Fragment>
